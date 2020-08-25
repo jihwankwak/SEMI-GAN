@@ -200,7 +200,7 @@ torch.save(discriminator.state_dict(), './dis_models/'+log_name)
 #                                          3. Generate Noise
 # ==================================================================================================
 
-if args.gan_model_type == 'gan1':
+if args.gan_model_type == 'gan1' or 'wgan':
     testType = 'gan'
 
 t_classifier = trainer.EvaluatorFactory.get_evaluator(args.sample_num, testType)
