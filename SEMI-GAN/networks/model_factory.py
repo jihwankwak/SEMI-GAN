@@ -41,3 +41,22 @@ class ModelFactory():
             
             import networks.wgan as gan
             return gan.wgan_gen(args.noise_d+num_of_input, args.gan_hidden_dim, args.num_of_output), gan.wgan_dis(args.num_of_output+num_of_input, args.gan_hidden_dim)
+    
+    def get_vae_model(args):
+        
+        num_of_input = args.num_of_input
+        num_of_output = args.num_of_output
+        hidden_dim = args.vae_hidden_dim
+        noise_d = args.noise_d
+        
+        if args.data_type == 'n' or args.data_type == 'p':
+            num_of_input += 1
+        elif args.data_type == 'none':
+            pass 
+        else:
+            num_of_input += 2
+        
+        if args.gan_model_type == 'vae1':
+            
+            import networks.vae1 as gan
+            return gan.VAE(noise_d, hidden_dim, num_of_output, num_of_input)
