@@ -10,11 +10,12 @@ def normalize(x, y):
     x_std = np.std(x, axis=0, dtype=np.float32)
         
     y_mean = np.mean(y, axis=0, dtype=np.float32)
-    y_std = np.std(y*1e+10, axis=0, dtype=np.float32)
+    y_std = np.std(1e+10*y, axis=0, dtype=np.float32)
 
     norm_x = ( x - x_mean ) / (x_std)
-    norm_y = ( y - y_mean ) * (1e+10)/ (y_std)
-        
+    norm_y = ( y - y_mean )*1e+10 / (y_std)
+       
+    y_std = y_std / 1e+10
     return norm_x, norm_y, y_mean, y_std
 
 def init_params(model):

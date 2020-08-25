@@ -44,8 +44,8 @@ def get_args():
     parser.add_argument('--num_of_input', type=int, default=4, help='Number of input for data')
     parser.add_argument('--num_of_output', type=int, default=6, help='Number of output for data')
     parser.add_argument('--sample_num', type=int, default=50, help='sampling number')
-  #  parser.add_argument('--num_of_cycle', type=int, default=200)
- #   parser.add_argument('--num_in_cycle', type=int, default=50)
+    parser.add_argument('--num_of_cycle', type=int, default=200)
+    parser.add_argument('--num_in_cycle', type=int, default=50)
 
     
 #     parser = deepspeed.add_config_arguments(parser)
