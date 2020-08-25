@@ -6,21 +6,38 @@ class ModelFactory():
     
     @staticmethod
     def get_mean_model(args):
-        
-        num_of_input = args.num_of_input
-        
-        if args.data_type == 'n' or args.data_type == 'p':
-            num_of_input += 1
-        elif args.data_type == 'none':
-            pass
-        else:
-            num_of_input += 2
-        
-        if args.mean_model_type == 'mlp':
+        if args.trainer == 'gan':
+            num_of_input = args.num_of_input
+
+            if args.data_type == 'n' or args.data_type == 'p':
+                num_of_input += 1
+            elif args.data_type == 'none':
+                pass
+            else:
+                num_of_input += 2
+
+            if args.mean_model_type == 'mlp':
+
+                import networks.mean_mlp as mean_mlp
+                return mean_mlp.Net(mean_hidden_dim=args.mean_hidden_dim, num_of_input=num_of_input, num_of_output=args.num_of_output)
             
-            import networks.mean_mlp as mean_mlp
-            return mean_mlp.Net(mean_hidden_dim=args.mean_hidden_dim, num_of_input=num_of_input, num_of_output=args.num_of_output)
+        elif args.trainer == 'gaussian':
+            num_of_input = args.num_of_input
+            num_of_output = int(2*args.num_of_output+((args.num_of_output)**2-(args.num_of_output))/2)
+
+            if args.data_type == 'n' or args.data_type == 'p':
+                num_of_input += 1
+            elif args.data_type == 'none':
+                pass
+            else:
+                num_of_input += 2
+
+            if args.mean_model_type == 'mlp':
+
+                import networks.mean_mlp as mean_mlp
+                return mean_mlp.Net(mean_hidden_dim=args.mean_hidden_dim, num_of_input=num_of_input, num_of_output=num_of_output)
             
+
     def get_gan_model(args):
         
         num_of_input = args.num_of_input

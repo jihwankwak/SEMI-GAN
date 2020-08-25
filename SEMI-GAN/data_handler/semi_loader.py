@@ -21,6 +21,8 @@ class SemiLoader(td.Dataset):
             
         x = torch.from_numpy(x).float().cuda()
         y = torch.from_numpy(y).float().cuda()
+        
+        # print(y)
                 
         # x[3] = 1.0
         # x[4] = 0.0

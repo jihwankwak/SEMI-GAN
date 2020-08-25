@@ -15,11 +15,15 @@ def get_args():
                                 'all',
                                 'none'], 
                         help='(default=%(default)s)')
-    parser.add_argument('--mean_model_type', default='mlp', type=str, required=False,
+    parser.add_argument('--trainer', type=str, required=True, 
+                        choices=['gan', 
+                                 'gaussian', 
+                                 'vae'])
+    parser.add_argument('--mean_model_type', required=True, type=str,
                         choices=['mlp'], 
                         help='(default=%(default)s)')
-    parser.add_argument('--gan_model_type', default='gan1', type=str, required=False,
-                        choices=['gan1'], 
+    parser.add_argument('--gan_model_type', default=True, type=str, required=False,
+                        choices=['gan1', 'wgan'], 
                         help='(default=%(default)s)')
     parser.add_argument('--seed', type=int, default=0,
                         help='Seeds values to be used; seed introduces randomness by changing order of classes')
@@ -40,6 +44,8 @@ def get_args():
     parser.add_argument('--num_of_input', type=int, default=4, help='Number of input for data')
     parser.add_argument('--num_of_output', type=int, default=6, help='Number of output for data')
     parser.add_argument('--sample_num', type=int, default=50, help='sampling number')
+    parser.add_argument('--num_of_cycle', type=int, default=50)
+    parser.add_argument('--num_in_cycle', type=int, default=200)
 
     
 #     parser = deepspeed.add_config_arguments(parser)

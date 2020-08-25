@@ -99,7 +99,44 @@ def load_data(file_path, datatype, num_input, num_output, num_in_cycle, num_of_c
       
     return X_all, Y_all, X_per_cycle, Y_per_cycle
 
+def mean_cov(y_all, num_in_cycle, num_of_cycle, num_output):
+    
+    print("Y_all size: ", y_all.shape)
+    
+    y_mean_cov_num = int(2*num_output+((num_output)**2-(num_output))/2)
+    # print(y_mean_cov_num)
+
+    y_mean_cov = np.zeros((num_of_cycle, y_mean_cov_num))
+    # print(y_mean_cov.shape)
+    
+    for i in range(num_of_cycle):
+        #print(i)        
+        #print(i*num_in_cycle, (i+1)*num_in_cycle)
+        temp = y_all[i*num_in_cycle:(i+1)*num_in_cycle,:]
+    
+        mean_y = np.mean(temp, axis=0)
+        cov_y = np.cov(temp.T)
+        # print(cov_y)
+        
+        # mean
+        y_mean_cov[i, :num_output] = mean_y
+        # print(y_mean_cov)
+        # diagonal
+        y_mean_cov[i, num_output:num_output*2] = np.diagonal(cov_y)
+        # print(y_mean_cov)
+        
+        # covariance
+        cnt = num_output*2
+        for j in range(1, num_output):
+            y_mean_cov[i,cnt:cnt+j] = cov_y[j,:j]
+            cnt += j
+            
+    return y_mean_cov
+        
 def split_data(x, y, num_train, num_val, num_test):
+    
+    print(x.shape)
+    print(y.shape)
     
     if len(x) == len(y):
         print("Same number of x data and y data")
@@ -143,13 +180,13 @@ class Dataset():
         
         self.train_Y_noise = None
         self.val_Y_noise = None
-        self.test_Y_noise = None
-
-class SEMI_data(Dataset):
+        self.test_Y_noise = None        
+        
+class SEMI_gan_data(Dataset):
     def __init__(self, name, datatype, num_input, num_output, num_in_cycle, num_of_cycle, num_train, num_val, num_test, x_cols, y_cols, header):
         super().__init__(name)
         
-        # DATASET with no PN type (2019 datas)
+        ##########################   DATASET with no PN type (2019 datas) ########################
      
         if datatype == 'none':
             X_all, Y_all, X_per_cycle, Y_per_cycle = load_data(name, datatype, num_input, num_output, num_in_cycle, num_of_cycle, x_cols, y_cols, header)
@@ -158,7 +195,7 @@ class SEMI_data(Dataset):
             self.train_X_per_cycle, self.train_Y_per_cycle, self.val_X_per_cycle, self.val_Y_per_cycle, self.test_X_per_cycle, self.test_Y_per_cycle = split_data(X_per_cycle, Y_per_cycle, num_train, num_val, num_test) 
             
 
-        # DATASET with PN type (2020 datas)
+        ##########################   DATASET with PN type (2020 datas) ########################
         
         # use P type
         elif datatype == 'p':
@@ -228,3 +265,75 @@ class SEMI_data(Dataset):
         print("train_Y_noise shape", self.train_Y_noise.shape)
         print("val_Y_noise shape", self.val_Y_noise.shape)
         print("test_Y_noise shape", self.test_Y_noise.shape) 
+        
+class SEMI_gaussian_data(Dataset):
+    def __init__(self, name, datatype, num_input, num_output, num_in_cycle, num_of_cycle, num_train, num_val, num_test, x_cols, y_cols, header):
+        super().__init__(name)
+        
+        ##########################   DATASET with no PN type (2019 datas) ########################
+     
+        if datatype == 'none':
+            X_all, Y_all, X_per_cycle, Y_per_cycle = load_data(name, datatype, num_input, num_output, num_in_cycle, num_of_cycle, x_cols, y_cols, header)
+        
+            self.train_X, self.train_Y, self.val_X, self.val_Y, self.test_X, self.test_Y = split_data(X_all, Y_all, num_train*num_in_cycle, num_val*num_in_cycle, num_test*num_in_cycle)
+            self.train_X_per_cycle, self.train_Y_per_cycle, self.val_X_per_cycle, self.val_Y_per_cycle, self.test_X_per_cycle, self.test_Y_per_cycle = split_data(X_per_cycle, Y_per_cycle, num_train, num_val, num_test) 
+            
+
+        ##########################   DATASET with PN type (2020 datas) ########################
+        
+        # use P type
+        elif datatype == 'p':
+            X_all_temp, Y_all_temp, X_per_cycle_temp, Y_per_cycle_temp = load_data(name, datatype, num_input, num_output, num_in_cycle, num_of_cycle, x_cols, y_cols, header)
+            
+            X_all = np.empty(num_input+1)
+            Y_all= np.empty(num_output)
+            
+            for i in range(num_of_cycle):
+                X_all = np.vstack((X_all, X_all_temp[num_in_cycle*(2*i+1):num_in_cycle*(2*i+1)+num_in_cycle]))
+                X_per_cycle = X_per_cycle_temp[1::2]
+                Y_all = np.vstack((Y_all, Y_all_temp[num_in_cycle*(2*i+1):num_in_cycle*(2*i+1)+num_in_cycle]))
+                Y_per_cycle = Y_per_cycle_temp[1::2]
+                
+            X_all = X_all[1:]
+            Y_all = Y_all[1:]
+            
+            # Changing Target Y variable : ( N, num_output) => ( N, mean + covariance )
+            Y_mean_cov = mean_cov(Y_all, num_in_cycle, num_of_cycle, num_output)
+        
+            self.train_X_per_cycle, self.train_Y_per_cycle, self.val_X_per_cycle, self.val_Y_per_cycle, self.test_X_per_cycle, self.test_Y_per_cycle = split_data(X_per_cycle, Y_mean_cov, num_train//2, num_val//2, num_test//2) 
+            
+        # use N type
+        elif datatype == 'n': 
+            X_all_temp, Y_all_temp, X_per_cycle_temp, Y_per_cycle_temp = load_data(name, datatype, num_input, num_output, num_in_cycle, num_of_cycle, x_cols, y_cols, header)
+            
+            X_all = np.empty(num_input+1)
+            Y_all= np.empty(num_output)
+            
+            for i in range(num_of_cycle):
+                X_all = np.vstack((X_all, X_all_temp[num_in_cycle*(2*i):num_in_cycle*(2*i)+num_in_cycle]))
+                X_per_cycle = X_per_cycle_temp[::2]
+                Y_all = np.vstack((Y_all, Y_all_temp[num_in_cycle*(2*i):num_in_cycle*(2*i)+num_in_cycle]))
+                Y_per_cycle = Y_per_cycle_temp[::2]
+            
+            X_all = X_all[1:]
+            Y_all = Y_all[1:]                                       
+
+            # Changing Target Y variable : ( N, num_output) => ( N, mean + covariance )
+            Y_mean_cov = mean_cov(Y_all, num_in_cycle, num_of_cycle//2, num_output)
+
+            self.train_X_per_cycle, self.train_Y_per_cycle, self.val_X_per_cycle, self.val_Y_per_cycle, self.test_X_per_cycle, self.test_Y_per_cycle = split_data(X_per_cycle, Y_mean_cov, num_train//2, num_val//2, num_test//2)        
+            
+        # use both P, N type
+        else:
+            
+            X_all, Y_all, X_per_cycle, Y_per_cycle = load_data(name, datatype, num_input, num_output, num_in_cycle, num_of_cycle, x_cols, y_cols, header)
+            
+            # Changing Target Y variable : ( N, num_output) => ( N, mean + covariance )
+            Y_mean_cov = mean_cov(Y_all, num_in_cycle, num_of_cycle, num_output)
+
+            self.train_X_per_cycle, self.train_Y_per_cycle, self.val_X_per_cycle, self.val_Y_per_cycle, self.test_X_per_cycle, self.test_Y_per_cycle = split_data(X_per_cycle, Y_mean_cov, num_train, num_val, num_test)             
+        
+        # STEP 2: Split data
+        
+        # OPTIONAL: Split data for Y_mean, Y_noise
+        

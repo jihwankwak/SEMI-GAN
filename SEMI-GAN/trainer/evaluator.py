@@ -1,6 +1,8 @@
 import torch
 import numpy as np
 import utils
+from torch.distributions.multivariate_normal import MultivariateNormal
+
 
 class EvaluatorFactory():
     def __init__(self):
@@ -31,7 +33,6 @@ class gan_evaluator():
         discriminator.eval()
         
         for i, data in enumerate(val_loader):
-            print(i)
             data_x, data_y = data
             data_x, data_y = data_x.cuda(), data_y.cuda()
             
@@ -65,13 +66,10 @@ class gan_evaluator():
         mean_model.eval()
         
         for i, data in enumerate(test_iterator):
-            print(i)
             data_x, data_y = data
             data_x, data_y = data_x.cuda(), data_y.cuda()
-            print(data_x)
             
             mini_batch_size = len(data_x)
-            print(mini_batch_size)
             
             with torch.autograd.no_grad():
                 mean = mean_model(data_x)
@@ -116,7 +114,6 @@ class gan_evaluator():
                 noise = noise.data.cpu().numpy()
                 
                 noise = noise*train_std + train_mean
-                print(noise.shape)
                 
                 noise_result.append(noise.tolist())
                 
@@ -129,3 +126,78 @@ class gan_evaluator():
         print("noise_result_size: ", noise_result.shape)
         
         return noise_result, total
+    
+class gaussian_evaluator():
+    
+    def __init__(self, sample_num):
+   
+        self.sample_num = sample_num
+        self.prob = {}
+    
+    def mean_cov_sample(self, best_model, train_mean, train_std, test_iterator):
+        
+        mean_cov_result = []
+        total = 0
+
+        best_model.eval()
+        
+        for i, data in enumerate(test_iterator):
+            data_x, data_y = data
+            data_x, data_y = data_x.cuda(), data_y.cuda()
+            
+            mini_batch_size = len(data_x)
+            
+            with torch.autograd.no_grad():
+                y_mean_cov = best_model(data_x)
+                
+                y_mean_cov = y_mean_cov.data.cpu().numpy()
+                
+                y_mean_cov = (y_mean_cov/1e+10)*train_std + train_mean
+                mean_cov_result.append(y_mean_cov[0].tolist())
+                
+                total += mini_batch_size
+        
+        mean_cov_result = np.array(mean_cov_result)
+            
+        print("mean_result size: ", mean_cov_result.shape)
+
+        return mean_cov_result, total
+    
+    def sample(self, mean_cov_result, num_output, num_of_cycle):
+        
+        result = []
+              
+        for i in range(num_of_cycle):
+            
+            # mean
+            mean = mean_cov_result[i,:num_output]
+            
+            cov = np.zeros((num_output, num_output))
+            
+            # covariance
+            cnt1 = num_output*2
+            for k in range(1, num_output):
+                cov[k,:k], cov[:k, k] = mean_cov_result[i, cnt1:cnt1+k], mean_cov_result[i, cnt1:cnt1+k]
+                cnt1 += 1
+                       
+            for l in range(num_output):
+                cov[l,l] = mean_cov_result[i, num_output+l]        
+            
+            mean = torch.from_numpy(mean).cuda()
+            cov = torch.from_numpy(cov).cuda()
+            
+            print(mean, cov)
+            
+            distrib = MultivariateNormal(loc=mean, covariance_matrix=cov)
+            
+            for j in range(args.sample_num):
+                
+                sample = distrib.rsample()
+                
+                result.append(sample.cpu().numpy())
+                
+        result = np.array(result)
+        
+        print("result size: ", result.shape)
+        
+        return result
