@@ -13,9 +13,4 @@ class DatasetFactory:
         elif args.dataset == '2020_LER_20200529_V004.xlsx':
             return data.SEMI_gan_data(args.dataset, args.data_type, num_input=4, num_output=6, num_in_cycle=50, num_of_cycle=72, num_train=50, num_val=10, num_test=12, x_cols="D:G", y_cols="H:P", header=0)
         elif args.dataset == '2020_LER_20200804_V006.xlsx':
-            if args.trainer == 'gan' or args.trainer == 'vae':
-                return data.SEMI_gan_data(args.dataset, args.data_type, num_input=4, num_output=6, num_in_cycle=50, num_of_cycle=200, num_train=150, num_val=20, num_test=30, x_cols="B:G", y_cols="H:P", header=0)
-            elif args.trainer == 'gaussian':
-                return data.SEMI_gaussian_data(args.dataset, args.data_type, num_input=4, num_output=6, num_in_cycle=50, num_of_cycle=200, num_train=150, num_val=20, num_test=30, x_cols="B:G", y_cols="H:P", header=0)
-        
-        
+            return data.SEMI_gan_data(args.dataset, args.data_type, num_input=4, num_output=6, num_in_cycle=50, num_of_cycle=200, num_train=150, num_val=20, num_test=30, x_cols="B:G", y_cols="H:P", header=0)

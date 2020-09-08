@@ -74,6 +74,7 @@ class MeanTrainer(trainer.mean_GenericTrainer):
                 true_arr += (data_y.data.cpu().numpy()).tolist()
                 pred_arr += (output.data.cpu().numpy()).tolist()
                 
+                #print(true_arr, pred_arr)
             val_loss /= val_num
             self.loss['val_loss'].append(val_loss)
             

@@ -47,6 +47,25 @@ print("="*100)
 # Dataset
 dataset = data_handler.DatasetFactory.get_dataset(args)
 
+# Changing Target Y variable : ( N, num_output) => ( N, mean + covariance )
+# dataset normalization
+
+train_x_per_cycle = dataset.train_X_per_cycle
+val_x_per_cycle = dataset.val_X_per_cycle
+
+normalized_train_x_per_cycle_temp, normalized_train_y, train_y_mean, train_y_std = utils.normalize(dataset.train_X_per_cycle[:,:3], dataset.train_Y)
+train_x_per_cycle[:,:3] = normalized_train_x_per_cycle_temp
+print(normalized_train_y.shape)
+normalized_val_x_per_cycle_temp, normalized_val_y, val_y_mean, val_y_std = utils.normalize(dataset.val_X_per_cycle[:,:3], dataset.val_Y)
+val_x_per_cycle[:,:3] = normalized_val_x_per_cycle_temp
+
+# mean, cov
+train_y_mean_cov = data_handler.mean_cov(normalized_train_y, args.num_in_cycle, 75, args.num_of_output)
+val_y_mean_cov = data_handler.mean_cov(normalized_train_y, args.num_in_cycle, 10, args.num_of_output)
+
+print("normalized training: ", train_x_per_cycle.shape, train_y_mean_cov.shape)
+print("normalized validation: ", val_x_per_cycle.shape, val_y_mean_cov)
+
 # loss result
 result_dict = {}
 
@@ -63,13 +82,14 @@ torch.set_default_tensor_type('torch.cuda.FloatTensor')
 #                                         1. model train
 # ==================================================================================================
 
-train_loader = data_handler.SemiLoader(dataset.train_X_per_cycle, 
-                                                    dataset.train_Y_per_cycle, 
-                                                    utils.normalize)
+train_loader = data_handler.SemiLoader(train_x_per_cycle, 
+                                                    train_y_mean_cov)
+print(train_x_per_cycle)
 
-val_loader = data_handler.SemiLoader(dataset.val_X_per_cycle, 
-                                                  dataset.val_Y_per_cycle,
-                                                  utils.normalize)
+val_loader = data_handler.SemiLoader(val_x_per_cycle, 
+                                                  val_y_mean_cov)
+
+print(val_x_per_cycle)
 
 test_loader = data_handler.SemiLoader(dataset.test_X_per_cycle, 
                                                    dataset.test_Y_per_cycle, 
@@ -85,7 +105,7 @@ test_iterator = torch.utils.data.DataLoader(test_loader, batch_size=1, shuffle=F
 
 # model
 
-model = networks.ModelFactory.get_mean_model(args)
+model = networks.ModelFactory.get_gaussian_model(args)
 
 # weight initialization
 
@@ -137,18 +157,13 @@ if args.trainer == 'gaussian':
 
 t_classifier = trainer.EvaluatorFactory.get_evaluator(args.sample_num, testType)
 
-# mean_cov result
+print(train_y_mean, train_y_std)
 
-train_mean = train_loader.data_y_mean
-train_std = train_loader.data_y_std
-
-print(train_mean, train_std)
-
-mean_cov_result, total = t_classifier.mean_cov_sample(best_model, train_mean, train_std, test_iterator)
+mean_cov_result, total = t_classifier.mean_cov_sample(best_model, test_iterator)
 
 # sample
 
-result = t_classifier.sample(mean_cov_result, args.num_of_output, args.num_of_cycle) 
+result = t_classifier.sample(mean_cov_result, train_y_mean, train_y_std, args.num_of_output, args.num_of_cycle, total) 
 
 if not os.path.exists('./sample_data'):
     os.makedirs('./sample_data')

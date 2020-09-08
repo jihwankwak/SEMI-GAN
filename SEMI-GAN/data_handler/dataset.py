@@ -74,7 +74,7 @@ def load_data(file_path, datatype, num_input, num_output, num_in_cycle, num_of_c
         # PANDAS TO NUMPY
         # X_per_cycle
         for i in range(num_of_cycle):    
-            #print(data_x[i*num_in_cycle:i*num_in_cycle+1])
+#            print(data_x[i*num_in_cycle:i*num_in_cycle+1])
             X_per_cycle[i] = data_x[i*num_in_cycle:i*num_in_cycle+1].values
 
         # X_all
@@ -111,7 +111,7 @@ def mean_cov(y_all, num_in_cycle, num_of_cycle, num_output):
     
     for i in range(num_of_cycle):
         #print(i)        
-        #print(i*num_in_cycle, (i+1)*num_in_cycle)
+#        print(i*num_in_cycle, (i+1)*num_in_cycle)
         temp = y_all[i*num_in_cycle:(i+1)*num_in_cycle,:]
     
         mean_y = np.mean(temp, axis=0)
@@ -264,8 +264,9 @@ class SEMI_gan_data(Dataset):
         
         print("train_Y_noise shape", self.train_Y_noise.shape)
         print("val_Y_noise shape", self.val_Y_noise.shape)
-        print("test_Y_noise shape", self.test_Y_noise.shape) 
-        
+        print("test_Y_noise shape", self.test_Y_noise.shape)    
+
+"""
 class SEMI_gaussian_data(Dataset):
     def __init__(self, name, datatype, num_input, num_output, num_in_cycle, num_of_cycle, num_train, num_val, num_test, x_cols, y_cols, header):
         super().__init__(name)
@@ -336,4 +337,8 @@ class SEMI_gaussian_data(Dataset):
         # STEP 2: Split data
         
         # OPTIONAL: Split data for Y_mean, Y_noise
+        
+
+"""
+
         

@@ -2,6 +2,7 @@ import torch
 import numpy as np
 import utils
 from torch.distributions.multivariate_normal import MultivariateNormal
+from torch.distributions.utils import _standard_normal
 
 
 class EvaluatorFactory():
@@ -112,7 +113,7 @@ class gan_evaluator():
                 noise = generator(z, data_x_sample)
                 
                 noise = noise.data.cpu().numpy()
-                
+                                
                 noise = noise*train_std + train_mean
                 
                 noise_result.append(noise.tolist())
@@ -134,7 +135,7 @@ class gaussian_evaluator():
         self.sample_num = sample_num
         self.prob = {}
     
-    def mean_cov_sample(self, best_model, train_mean, train_std, test_iterator):
+    def mean_cov_sample(self, best_model, test_iterator):
         
         mean_cov_result = []
         total = 0
@@ -151,8 +152,8 @@ class gaussian_evaluator():
                 y_mean_cov = best_model(data_x)
                 
                 y_mean_cov = y_mean_cov.data.cpu().numpy()
-                
-                y_mean_cov = (y_mean_cov/1e+10)*train_std + train_mean
+#               print(y_mean_cov)
+              
                 mean_cov_result.append(y_mean_cov[0].tolist())
                 
                 total += mini_batch_size
@@ -163,18 +164,20 @@ class gaussian_evaluator():
 
         return mean_cov_result, total
     
-    def sample(self, mean_cov_result, num_output, num_of_cycle):
+    def sample(self, mean_cov_result, train_mean, train_std, num_output, num_of_cycle, total):
         
         result = []
               
-        for i in range(num_of_cycle):
+        for i in range(total):
+            
+            temp_result = []
             
             # mean
             mean = mean_cov_result[i,:num_output]
             
+            # covariance
             cov = np.zeros((num_output, num_output))
             
-            # covariance
             cnt1 = num_output*2
             for k in range(1, num_output):
                 cov[k,:k], cov[:k, k] = mean_cov_result[i, cnt1:cnt1+k], mean_cov_result[i, cnt1:cnt1+k]
@@ -187,14 +190,25 @@ class gaussian_evaluator():
             cov = torch.from_numpy(cov).cuda()
             
             print(mean, cov)
+
+#            shape = self._extended_shape(sample_shape)
+#            eps = _standard_normal(shape, dtype=mean.dtype, device=mean.device)
+#            _unbroadcasted_scale_trill = torch.cholesky(cov)
+#            sample = mean + _batch_mv(_unbroadcasted_scale_trill, eps)
             
+            # define distribution
             distrib = MultivariateNormal(loc=mean, covariance_matrix=cov)
             
+            # sample
             for j in range(args.sample_num):
                 
                 sample = distrib.rsample()
                 
-                result.append(sample.cpu().numpy())
+                sample = sample*train_std + train_mean
+                
+                temp_result.append(sample.cpu().numpy())
+            
+            result.append(temp_result)
                 
         result = np.array(result)
         
