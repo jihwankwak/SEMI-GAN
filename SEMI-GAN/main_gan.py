@@ -33,6 +33,9 @@ log_name = 'date_{}_data_{}_model_{}_{}_seed_{}_lr_{}_{}_{}_hidden_dim_{}_{}_bat
     args.sample_num
     )
 
+if args.pdrop is not None:
+    log_name += '_pdrop_{}'.format(args.pdrop)
+
 print(log_name)
 
 print("="*100)

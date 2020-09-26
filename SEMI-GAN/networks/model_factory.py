@@ -37,6 +37,11 @@ class ModelFactory():
             import networks.gan1 as gan
             return gan.gen1(args.noise_d+num_of_input, args.gan_hidden_dim, args.num_of_output), gan.dis1(args.num_of_output+num_of_input, args.gan_hidden_dim)
         
+        elif args.gan_model_type == 'gan2':
+            
+            import networks.gan2 as gan
+            return gan.gen2(args.noise_d+num_of_input, args.gan_hidden_dim, args.num_of_output), gan.dis2(args.num_of_output+num_of_input, args.gan_hidden_dim, args.pdrop)
+        
         elif args.gan_model_type == 'wgan':
             
             import networks.wgan as gan

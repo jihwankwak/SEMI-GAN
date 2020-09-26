@@ -17,7 +17,7 @@ class TrainerFactory():
             return trainer.MeanTrainer(train_iterator, val_iterator, mean_model, optimizer, exp_lr_scheduler)
     
     def get_gan_trainer(noise_trainer_iterator, noise_val_iterator, generator, discriminator, args, optimizer_g, optimizer_d, exp_gan_lr_scheduler):
-        if args.gan_model_type == 'gan1':
+        if args.gan_model_type == 'gan1' or args.gan_model_type == 'gan2':
             import trainer.gan1 as trainer
             
             return trainer.GanTrainer(noise_trainer_iterator, noise_val_iterator, generator, discriminator, optimizer_g, optimizer_d, exp_gan_lr_scheduler, args.noise_d)

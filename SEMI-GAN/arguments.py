@@ -23,7 +23,7 @@ def get_args():
                         choices=['mlp'], 
                         help='(default=%(default)s)')
     parser.add_argument('--gan_model_type', default=True, type=str, required=False,
-                        choices=['gan1', 'wgan'], 
+                        choices=['gan1', 'wgan', 'gan2'], 
                         help='(default=%(default)s)')
     parser.add_argument('--seed', type=int, default=0,
                         help='Seeds values to be used; seed introduces randomness by changing order of classes')
@@ -46,7 +46,7 @@ def get_args():
     parser.add_argument('--sample_num', type=int, default=50, help='sampling number')
     parser.add_argument('--num_of_cycle', type=int, default=200)
     parser.add_argument('--num_in_cycle', type=int, default=50)
-
+    parser.add_argument('--pdrop', type=float, default=0.9, help='dropout rate')
 
     
 #     parser = deepspeed.add_config_arguments(parser)
