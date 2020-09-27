@@ -4,7 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class gen3(nn.Module):
-    def __init__(self, d_noise_num_of_input, gan_hidden_dim, num_of_output):
+    def __init__(self, d_noise_num_of_input, gan_hidden_dim, num_of_output, pdrop):
         super(gen3, self).__init__()
         self.fc1 = nn.Linear(d_noise_num_of_input, gan_hidden_dim)
         self.fc2 = nn.Linear(gan_hidden_dim, gan_hidden_dim)
