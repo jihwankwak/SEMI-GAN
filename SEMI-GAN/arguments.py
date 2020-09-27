@@ -24,7 +24,7 @@ def get_args():
                         choices=['mlp'], 
                         help='(default=%(default)s)')
     parser.add_argument('--gan_model_type', default=True, type=str, required=False,
-                        choices=['gan1', 'wgan', 'gan2'], 
+                        choices=['gan1', 'wgan', 'gan2','gan3'], 
                         help='(default=%(default)s)')
     parser.add_argument('--seed', type=int, default=0,
                         help='Seeds values to be used; seed introduces randomness by changing order of classes')
