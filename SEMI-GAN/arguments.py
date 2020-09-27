@@ -10,6 +10,10 @@ def get_args():
                                 '2020_LER_20200804_V006.xlsx', 
                                 '2020_LER_20200922_V007_testset_edit.csv'], 
                         help='(default=%(default)s)')
+    parser.add_argument('--dataset_test', default='2020_LER_20200922_V007_testset_edit.csv', type=str, required=False,
+                        choices=['2020_LER_20200922_testset.csv'
+                                ], 
+                        help='(default=%(default)s)')
     parser.add_argument('--data_type', default='n', type=str, required=False,
                         choices=['p',
                                  'n',
@@ -48,7 +52,8 @@ def get_args():
     parser.add_argument('--num_of_cycle', type=int, default=200)
     parser.add_argument('--num_in_cycle', type=int, default=50)
     parser.add_argument('--pdrop', type=float, default=0.9, help='dropout rate')
-
+    parser.add_argument('--mode', default='train', choices=['train', 'eval'])
+    parser.add_argument('--model_path', default='None')
     
 #     parser = deepspeed.add_config_arguments(parser)
     args=parser.parse_args()

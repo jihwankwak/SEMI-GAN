@@ -89,6 +89,47 @@ def load_data(file_path, datatype, num_input, num_output, num_in_cycle, num_of_c
       
     return X_all, Y_all, X_per_cycle, Y_per_cycle
 
+def load_sample_data(file_path, num_input, num_output, num_in_cycle, num_of_cycle, x_cols, y_cols, header):  
+    """
+    
+     1) 20191107 기준 : num_input, num_output, num_of_cycle = 185, num_in_cycle=10, header=2, usecols="D:G" 확인 필수
+     2) num_input, num_output, num_in_cycle, num_of_cycle 새로 추가함
+    
+    """
+    num_total = sum(num_in_cycle)
+    
+    data_x = pd.read_csv('./'+file_path, header=0, usecols=x_cols)
+    data_y = pd.read_csv('./'+file_path, header=0, usecols=y_cols)
+        
+    data_x =pd.get_dummies(data_x, columns=['PNMOS'])
+   
+    num_input = data_x.shape[1]
+    
+    X_all , Y_all = np.zeros((num_total, num_input)), np.zeros((num_total, num_output))
+    X_per_cycle, Y_per_cycle = np.zeros((num_of_cycle, num_input+1)), np.zeros((num_of_cycle, num_output))
+    
+    X_all = data_x.values
+    X_all = np.hstack([X_all, np.zeros((X_all.shape[0], 1))])
+    Y_all = data_y.values
+    
+    # X_per_cycle
+   
+    idx = 0
+    add = 0     
+    for i in range(num_of_cycle):
+        add = num_in_cycle[i]
+        X_per_cycle[i] = np.mean(X_all[idx:idx+add], axis=0)
+        Y_per_cycle[i] = np.mean(Y_all[idx:idx+add], axis=0)
+        idx += add                
+        
+    print("============ Data load =============")
+    print("X data shape: ", X_all.shape, "X per cycle data shape:", X_per_cycle.shape)
+    print("Y data shape: ", Y_all.shape, "Y per cycle data shape:", Y_per_cycle.shape)  
+    print("any nan in X?: ", np.argwhere(np.isnan(X_all)))
+    print("any nan in Y?: ", np.argwhere(np.isnan(Y_all)))
+      
+    return X_all, Y_all, X_per_cycle, Y_per_cycle
+
 def mean_cov(y_all, num_in_cycle, num_of_cycle, num_output):
     
     print("Y_all size: ", y_all.shape)
@@ -256,6 +297,19 @@ class SEMI_gan_data(Dataset):
         print("val_Y_noise shape", self.val_Y_noise.shape)
         print("test_Y_noise shape", self.test_Y_noise.shape)    
 
+class SEMI_sample_data(Dataset):
+    def __init__(self, name, num_input, num_output, num_in_cycle, num_of_cycle, x_cols, y_cols, header):
+        super().__init__(name)
+        
+        X_all, Y_all, X_per_cycle, Y_per_cycle = load_sample_data(name, num_input, num_output, num_in_cycle, num_of_cycle, x_cols, y_cols, header)
+        
+        self.test_X = X_all
+        self.test_Y = Y_all
+        self.test_X_per_cycle = X_per_cycle
+        self.test_Y_per_cycle = X_per_cycle
+
+                 
+        
 """
 class SEMI_gaussian_data(Dataset):
     def __init__(self, name, datatype, num_input, num_output, num_in_cycle, num_of_cycle, num_train, num_val, num_test, x_cols, y_cols, header):

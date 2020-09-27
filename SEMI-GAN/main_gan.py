@@ -46,6 +46,7 @@ print("="*100)
 
 # Dataset
 dataset = data_handler.DatasetFactory.get_dataset(args)
+dataset_test = data_handler.DatasetFactory.get_test_dataset(args)
 
 # loss result
 result_dict = {}
@@ -103,21 +104,29 @@ exp_lr_scheduler = lr_scheduler.StepLR(optimizer, step_size=100, gamma=0.5) # sc
 
 mean_mytrainer = trainer.TrainerFactory.get_mean_trainer(mean_train_iterator, mean_val_iterator, mean_model, args, optimizer, exp_lr_scheduler)
 
-for epoch in range(args.mean_nepochs):
-    
-    train_loss = mean_mytrainer.train()
-    
-    val_loss, val_r2 = mean_mytrainer.evaluate()
-    
-    current_lr = mean_mytrainer.current_lr
-    
-    if((epoch+1)% 10 == 0):
-        print("epoch:{:2d}, lr:{:.6f}, || train_loss:{:.6f}, val_loss:{:.6f}, r2_score:{:.6f}".format(epoch, current_lr, train_loss, val_loss, val_r2))
+if args.mode == 'train':
+    for epoch in range(args.mean_nepochs):
 
-result_dict['train_loss'] = mean_mytrainer.loss['train_loss']
-result_dict['val_loss'] = mean_mytrainer.loss['val_loss']
-        
-mean_best_model = mean_mytrainer.best_model
+        train_loss = mean_mytrainer.train()
+
+        val_loss, val_r2 = mean_mytrainer.evaluate()
+
+        current_lr = mean_mytrainer.current_lr
+
+        if((epoch+1)% 10 == 0):
+            print("epoch:{:2d}, lr:{:.6f}, || train_loss:{:.6f}, val_loss:{:.6f}, r2_score:{:.6f}".format(epoch, current_lr, train_loss, val_loss, val_r2))
+
+    result_dict['train_loss'] = mean_mytrainer.loss['train_loss']
+    result_dict['val_loss'] = mean_mytrainer.loss['val_loss']
+
+    mean_best_model = mean_mytrainer.best_model
+    if not os.path.exists('./mean_models'):
+        os.makedirs('./mean_models')
+    torch.save(mean_best_model.state_dict(), './mean_models/'+log_name)
+else :
+    print('Load mean model----------------')
+    mean_mytrainer.model.load_state_dict(torch.load('./mean_models/'+args.model_path))
+    mean_best_model = mean_mytrainer.model
 
 # ==================================================================================================
 #                                          2. Predict noise
@@ -168,60 +177,75 @@ exp_gan_lr_scheduler = lr_scheduler.StepLR(optimizer_d, step_size=50, gamma=0.5)
 
 gan_mytrainer = trainer.TrainerFactory.get_gan_trainer(noise_train_iterator, noise_val_iterator, generator, discriminator, args, optimizer_g, optimizer_d, exp_gan_lr_scheduler)
 
-for epoch in range(args.gan_nepochs):
-    
-    gan_mytrainer.train()
-    
-    p_real, p_fake = gan_mytrainer.evaluate()
-        
-    current_d_lr = gan_mytrainer.current_d_lr
-    
-    if((epoch+1)% 10 == 0):
-        print("epoch:{:2d}, lr_d:{:.6f}, || p_real:{:.6f}, p_fake:{:.6f}".format(epoch, current_d_lr, p_real, p_fake))
-        
-result_dict['p_real_train'] = gan_mytrainer.prob['p_real_train']
-result_dict['p_fake_train'] = gan_mytrainer.prob['p_fake_train']
-result_dict['p_real_val'] = gan_mytrainer.prob['p_real_val']
-result_dict['p_fake_val'] = gan_mytrainer.prob['p_fake_val']
+if args.mode == 'train':
+    for epoch in range(args.gan_nepochs):
 
-if not os.path.exists('./result_loss'):
-    os.makedirs('./result_loss')
-np.save('./result_loss/'+log_name, result_dict)
+        gan_mytrainer.train()
 
-# net.state_dict()
-if not os.path.exists('./mean_models'):
-    os.makedirs('./mean_models')
-torch.save(mean_best_model.state_dict(), './mean_models/'+log_name)
-if not os.path.exists('./gen_models'):
-    os.makedirs('./gen_models')
-torch.save(generator.state_dict(), './gen_models/'+log_name)
-if not os.path.exists('./dis_models'):
-    os.makedirs('./dis_models')
-torch.save(discriminator.state_dict(), './dis_models/'+log_name)
+        p_real, p_fake = gan_mytrainer.evaluate()
+
+        current_d_lr = gan_mytrainer.current_d_lr
+
+        if((epoch+1)% 10 == 0):
+            print("epoch:{:2d}, lr_d:{:.6f}, || p_real:{:.6f}, p_fake:{:.6f}".format(epoch, current_d_lr, p_real, p_fake))
+
+    result_dict['p_real_train'] = gan_mytrainer.prob['p_real_train']
+    result_dict['p_fake_train'] = gan_mytrainer.prob['p_fake_train']
+    result_dict['p_real_val'] = gan_mytrainer.prob['p_real_val']
+    result_dict['p_fake_val'] = gan_mytrainer.prob['p_fake_val']
+
+    if not os.path.exists('./result_loss'):
+        os.makedirs('./result_loss')
+    np.save('./result_loss/'+log_name, result_dict)
+
+    # net.state_dict()
+    if not os.path.exists('./gen_models'):
+        os.makedirs('./gen_models')
+    torch.save(generator.state_dict(), './gen_models/'+log_name)
+    if not os.path.exists('./dis_models'):
+        os.makedirs('./dis_models')
+    torch.save(discriminator.state_dict(), './dis_models/'+log_name)
+else : 
+    gan_mytrainer.G.load_state_dict(torch.load('./gen_models/'+args.model_path))
+#    gan_mytrainer.D.load_state_dict(torch.load('./gen_models/'+args.model_path))
+
 
 # ==================================================================================================
 #                                          3. Generate Noise
 # ==================================================================================================
 
-testType = 'gan'
+test_mean_dataset_loader = data_handler.SemiLoader(dataset_test.test_X_per_cycle, 
+                                                   dataset_test.test_Y_per_cycle, 
+                                                   utils.normalize)
 
+test_mean_iterator = torch.utils.data.DataLoader(test_mean_dataset_loader, batch_size=1, shuffle=False, **kwargs)
+
+if args.gan_model_type == 'gan1' or 'wgan' or 'gan2' or 'gan3':
+    testType = 'gan'
+    
 t_classifier = trainer.EvaluatorFactory.get_evaluator(args.sample_num, testType)
 
 # mean result
-
 mean_train_mean = mean_train_dataset_loader.data_y_mean
 mean_train_std = mean_train_dataset_loader.data_y_std
 
-print(mean_train_mean, mean_train_std)
+print(mean_train_mean, mean_train_std)    
 
-mean_result, mean_total = t_classifier.mean_sample(mean_best_model, mean_train_mean, mean_train_std, mean_test_iterator)
+if args.mode == 'train':
+    mean_result, mean_total = t_classifier.mean_sample(mean_best_model, mean_train_mean, mean_train_std, mean_test_iterator)
+else:
+    mean_result, mean_total = t_classifier.mean_sample(mean_best_model, mean_train_mean, mean_train_std, test_mean_iterator)
+
 
 # noise result
-
 noise_train_mean = noise_train_dataset_loader.data_y_mean
 noise_train_std = noise_train_dataset_loader.data_y_std
 
-noise_result, noise_total = t_classifier.noise_sample(mean_result, generator, noise_train_mean, noise_train_std, mean_test_iterator, 5, 6, args.noise_d)
+if args.mode == 'train':
+    noise_result, noise_total = t_classifier.noise_sample(mean_result, generator, noise_train_mean, noise_train_std, mean_test_iterator, 5, 6, args.noise_d)
+else:
+    noise_result, noise_total = t_classifier.noise_sample(mean_result, generator, noise_train_mean, noise_train_std, test_mean_iterator, 5, 6, args.noise_d)
+    
 # 5: num_of_input + 1
 # 6: num_of_output
 
@@ -230,6 +254,7 @@ total_result = noise_result + mean_result
 
 if not os.path.exists('./sample_data'):
     os.makedirs('./sample_data')
-np.save('./sample_data/'+'total_'+log_name, total_result)
-np.save('./sample_data/'+'mean_'+log_name, mean_result)
-np.save('./sample_data/'+'std_'+log_name, noise_result)
+if args.mode == 'train':
+    np.save('./sample_data/'+log_name, total_result)
+else:
+    np.save('./sample_data/'+'test_specific'+log_name, total_result)

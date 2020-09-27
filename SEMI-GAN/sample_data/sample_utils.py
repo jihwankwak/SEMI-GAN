@@ -8,6 +8,7 @@ import pandas as pd
 from pandas import ExcelWriter
 from pandas import ExcelFile
 import numpy as np
+import cv2
 
 import matplotlib.pyplot as plt
 import math
@@ -26,6 +27,11 @@ def get_dataset(name, datatype):
         return SEMI_data(name, datatype, num_input=4, num_output=6, num_in_cycle=50, num_of_cycle=200, num_train=150, num_val=20, num_test=30, x_cols="B:G", y_cols="H:P", header=0)
     elif name == '2020_LER_20200922_V007_testset_edit.csv':
         return SEMI_data(name, datatype, num_input=4, num_output=6, num_in_cycle=50, num_of_cycle=236, num_train=88*2, num_val=15*2, num_test=15*2, x_cols=['PNMOS', 'amp.', 'corr.x', 'corr.y'], y_cols=['Ioff', 'IDSAT', 'IDLIN', 'VTSAT', 'VTLIN', 'SS'], header=0)
+    
+def get_dataset_test(name, datatype):
+    if name == '2020_LER_20200922_testset.csv':
+            return SEMI_sample_data(name, num_input=4, num_output=6, num_in_cycle=[232, 289, 277, 253, 255], num_of_cycle=5, x_cols=['PNMOS', 'amp.', 'corr.x', 'corr.y'], y_cols=['Ioff', 'IDSAT', 'IDLIN', 'VTSAT', 'VTLIN', 'SS'], header=0)
+
         
 def load_data(file_path, datatype, num_input, num_output, num_in_cycle, num_of_cycle, x_cols, y_cols, header):  
     """
@@ -114,6 +120,47 @@ def load_data(file_path, datatype, num_input, num_output, num_in_cycle, num_of_c
     print("any nan in Y?: ", np.argwhere(np.isnan(Y_all)))
     print()
     
+    return X_all, Y_all, X_per_cycle, Y_per_cycle
+
+def load_sample_data(file_path, num_input, num_output, num_in_cycle, num_of_cycle, x_cols, y_cols, header):  
+    """
+    
+     1) 20191107 기준 : num_input, num_output, num_of_cycle = 185, num_in_cycle=10, header=2, usecols="D:G" 확인 필수
+     2) num_input, num_output, num_in_cycle, num_of_cycle 새로 추가함
+    
+    """
+    num_total = sum(num_in_cycle)
+    
+    data_x = pd.read_csv('../'+file_path, header=0, usecols=x_cols)
+    data_y = pd.read_csv('../'+file_path, header=0, usecols=y_cols)
+        
+    data_x =pd.get_dummies(data_x, columns=['PNMOS'])
+   
+    num_input = data_x.shape[1]
+    
+    X_all , Y_all = np.zeros((num_total, num_input)), np.zeros((num_total, num_output))
+    X_per_cycle, Y_per_cycle = np.zeros((num_of_cycle, num_input+1)), np.zeros((num_of_cycle, num_output))
+    
+    X_all = data_x.values
+    X_all = np.hstack([X_all, np.zeros((X_all.shape[0], 1))])
+    Y_all = data_y.values
+    
+    # X_per_cycle
+   
+    idx = 0
+    add = 0     
+    for i in range(num_of_cycle):
+        add = num_in_cycle[i]
+        X_per_cycle[i] = np.mean(X_all[idx:idx+add], axis=0)
+        Y_per_cycle[i] = np.mean(Y_all[idx:idx+add], axis=0)
+        idx += add                
+        
+    print("============ Data load =============")
+    print("X data shape: ", X_all.shape, "X per cycle data shape:", X_per_cycle.shape)
+    print("Y data shape: ", Y_all.shape, "Y per cycle data shape:", Y_per_cycle.shape)  
+    print("any nan in X?: ", np.argwhere(np.isnan(X_all)))
+    print("any nan in Y?: ", np.argwhere(np.isnan(Y_all)))
+      
     return X_all, Y_all, X_per_cycle, Y_per_cycle
 
 def split_data(x, y, num_train, num_val, num_test):
@@ -237,7 +284,17 @@ class SEMI_data(Dataset):
 
             self.train_X, self.train_Y, self.val_X, self.val_Y, self.test_X, self.test_Y = split_data(X_all, Y_all, num_train*num_in_cycle, num_val*num_in_cycle, num_test*num_in_cycle)
             self.train_X_per_cycle, self.train_Y_per_cycle, self.val_X_per_cycle, self.val_Y_per_cycle, self.test_X_per_cycle, self.test_Y_per_cycle = split_data(X_per_cycle, Y_per_cycle, num_train, num_val, num_test)             
-       
+            
+class SEMI_sample_data(Dataset):
+    def __init__(self, name, num_input, num_output, num_in_cycle, num_of_cycle, x_cols, y_cols, header):
+        super().__init__(name)
+        
+        X_all, Y_all, X_per_cycle, Y_per_cycle = load_sample_data(name, num_input, num_output, num_in_cycle, num_of_cycle, x_cols, y_cols, header)
+        
+        self.test_X = X_all
+        self.test_Y = Y_all
+        self.test_X_per_cycle = X_per_cycle
+        self.test_Y_per_cycle = X_per_cycle
         
 def FID_score(generated_samples, real_samples):
     # https://en.wikipedia.org/wiki/Sample_mean_and_covariance
@@ -309,3 +366,21 @@ def KL_with_KDE_each_X(generated_samples, real_samples, num_in_cycle):
         KL_div_list.append(KL_div)
         
     return np.mean(np.array(KL_div_list))
+
+def EMD_each_X(generated_samples, real_samples, num_in_gen, num_in_cycle):
+    generated_samples = np.float32(generated_samples)
+    real_samples = np.float32(real_samples)
+    num_of_cycle = int(len(real_samples)/num_in_cycle)
+    EMD_score_list = []
+    for i in  range(num_of_cycle):
+        generated_samples_cycle = generated_samples[i*num_in_gen : (i+1)*num_in_gen]
+        real_samples_cycle = real_samples[i*num_in_cycle : (i+1)*num_in_cycle]
+        EMD, _, _ = cv2.EMD(generated_samples_cycle, real_samples_cycle, cv2.DIST_L2)
+        EMD_score_list.append(EMD)
+        
+    return np.mean(np.array(EMD_score_list)), EMD_score_list
+
+    
+        
+
+    
