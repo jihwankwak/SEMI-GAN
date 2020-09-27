@@ -25,8 +25,8 @@ def load_data(file_path, datatype, num_input, num_output, num_in_cycle, num_of_c
     num_total = num_of_cycle*num_in_cycle
     
     if datatype == 'none':
-        data_x = pd.read_excel('./'+file_path, sheet_name='uniformly sampled',usecols=x_cols, nrows=num_total+1, header=header)
-        data_y = pd.read_excel('./'+file_path, sheet_name='uniformly sampled', usecols=y_cols, nrows=num_total+1, header=header)
+        data_x = pd.read_csv('./'+file_path, header=0, usecols=x_cols)
+        data_y = pd.read_csv('./'+file_path, header=0, usecols=y_cols)
         
         # No one-hot encoding 
         X_all , Y_all = np.zeros((num_total, num_input)), np.zeros((num_total, num_output))
@@ -49,28 +49,18 @@ def load_data(file_path, datatype, num_input, num_output, num_in_cycle, num_of_c
             Y_per_cycle[i] = np.mean(Y_all[i*num_in_cycle:(i+1)*num_in_cycle],axis=0)
 
     else:
-        data_x = pd.read_excel('./'+file_path, sheet_name='Generated DATAs',usecols=x_cols, nrows=num_total+1, header=header)
-        data_y = pd.read_excel('./'+file_path, sheet_name='Generated DATAs', usecols=y_cols, nrows=num_total+1, header=header)
-
+        data_x = pd.read_csv('./'+file_path, header=0, usecols=x_cols)
+        data_y = pd.read_csv('./'+file_path, header=0, usecols=y_cols)
+       
         # one-hot encoding (num_input +1)
         X_all , Y_all = np.zeros((num_total, num_input+1)), np.zeros((num_total, num_output))
         X_per_cycle, Y_per_cycle = np.zeros((num_of_cycle, num_input+1)), np.zeros((num_of_cycle, num_output))
  
         # DATA_X DATA_Y preprocessing
 
-        # 1. N, P to 10, 01 (one-hot encoding)
+        # N, P to 10, 01 (one-hot encoding)
         data_x =pd.get_dummies(data_x, columns=['PNMOS'], dtype=float)
 
-        # 2. Remove unrequired column ( Wfin [nm], alpha )
-        # X: Wfin, alpha
-        data_x = data_x.drop('Wfin [nm]', axis=1)
-        data_x = data_x.drop('alpha', axis=1)
-
-        # Y: IDLO, IDHI, DIBL
-        data_y = data_y.drop('IDLO', axis=1)
-        data_y = data_y.drop('IDHI', axis=1)
-        data_y = data_y.drop('DIBL(mV)', axis=1)
-        
         # PANDAS TO NUMPY
         # X_per_cycle
         for i in range(num_of_cycle):    

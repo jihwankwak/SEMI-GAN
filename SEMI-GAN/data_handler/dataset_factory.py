@@ -14,3 +14,5 @@ class DatasetFactory:
             return data.SEMI_gan_data(args.dataset, args.data_type, num_input=4, num_output=6, num_in_cycle=50, num_of_cycle=72, num_train=50, num_val=10, num_test=12, x_cols="D:G", y_cols="H:P", header=0)
         elif args.dataset == '2020_LER_20200804_V006.xlsx':
             return data.SEMI_gan_data(args.dataset, args.data_type, num_input=4, num_output=6, num_in_cycle=50, num_of_cycle=200, num_train=150, num_val=20, num_test=30, x_cols="B:G", y_cols="H:P", header=0)
+        elif args.dataset == '2020_LER_20200922_V007_testset_edit.csv':
+            return data.SEMI_gan_data(args.dataset, args.data_type, num_input=4, num_output=6, num_in_cycle=50, num_of_cycle=236, num_train=88*2, num_val=15*2, num_test=15*2, x_cols=['PNMOS', 'amp.', 'corr.x', 'corr.y'], y_cols=['Ioff', 'IDSAT', 'IDLIN', 'VTSAT', 'VTLIN', 'SS'], header=0)

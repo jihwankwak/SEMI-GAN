@@ -7,7 +7,8 @@ def get_args():
                         choices=['LER_data_20191125.xlsx',
                                  'LER_data_20191107.xlsx',
                                  '2020_LER_20200529_V004.xlsx',
-                                '2020_LER_20200804_V006.xlsx'], 
+                                '2020_LER_20200804_V006.xlsx', 
+                                '2020_LER_20200922_V007_testset_edit.csv'], 
                         help='(default=%(default)s)')
     parser.add_argument('--data_type', default='n', type=str, required=False,
                         choices=['p',
