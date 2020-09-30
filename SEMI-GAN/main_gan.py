@@ -213,12 +213,12 @@ else :
 # ==================================================================================================
 #                                          3. Generate Noise
 # ==================================================================================================
+if args.mode == 'eval':
+    test_mean_dataset_loader = data_handler.SemiLoader(dataset_test.test_X_per_cycle, 
+                                                       dataset_test.test_Y_per_cycle, 
+                                                       utils.normalize)
 
-test_mean_dataset_loader = data_handler.SemiLoader(dataset_test.test_X_per_cycle, 
-                                                   dataset_test.test_Y_per_cycle, 
-                                                   utils.normalize)
-
-test_mean_iterator = torch.utils.data.DataLoader(test_mean_dataset_loader, batch_size=1, shuffle=False, **kwargs)
+    test_mean_iterator = torch.utils.data.DataLoader(test_mean_dataset_loader, batch_size=1, shuffle=False, **kwargs)
 
 if args.gan_model_type == 'gan1' or 'wgan' or 'gan2' or 'gan3':
     testType = 'gan'
