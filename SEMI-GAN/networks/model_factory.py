@@ -19,7 +19,7 @@ class ModelFactory():
         if args.mean_model_type == 'mlp':
             
             import networks.mean_mlp as mean_mlp
-            return mean_mlp.Net(mean_hidden_dim=args.mean_hidden_dim, num_of_input=num_of_input, num_of_output=args.num_of_output)
+            return mean_mlp.Net(mean_hidden_dim=100, num_of_input=num_of_input, num_of_output=args.num_of_output)
             
     def get_gan_model(args):
         
@@ -52,6 +52,11 @@ class ModelFactory():
             
             import networks.wgan as gan
             return gan.wgan_gen(args.noise_d+num_of_input, args.gan_hidden_dim, args.num_of_output), gan.wgan_dis(args.num_of_output+num_of_input, args.gan_hidden_dim)
+        
+        elif args.gan_model_type == 'gan4':
+            import networks.gan4 as gan
+            return gan.gen1(args.noise_d+num_of_input, args.gan_hidden_dim, args.num_of_output), gan.dis1(args.num_of_output+num_of_input, args.gan_hidden_dim)
+            
     
     def get_vae_model(args):
         
