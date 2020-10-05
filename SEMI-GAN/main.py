@@ -218,7 +218,7 @@ else :
 #                                          3. Generate Noise
 # ==================================================================================================
 
-if args.gan_model_type == 'gan1' or 'wgan' or 'gan2' or 'gan3' or 'gan4':
+if args.gan_model_type == 'gan1' or 'wgan' or 'gan2' or 'gan3' or 'gan4' or 'wgan_gp':
     testType = 'gan'
     
 t_classifier = trainer.EvaluatorFactory.get_evaluator(args.sample_num, testType)

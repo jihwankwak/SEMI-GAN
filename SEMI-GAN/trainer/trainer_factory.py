@@ -27,6 +27,11 @@ class TrainerFactory():
             
             return trainer.GanTrainer(noise_trainer_iterator, noise_val_iterator, generator, discriminator, optimizer_g, optimizer_d, exp_gan_lr_scheduler, args.noise_d)
         
+        elif args.gan_model_type == 'wgan_gp':
+            import trainer.wgan_gp as trainer
+            
+            return trainer.GanTrainer(noise_trainer_iterator, noise_val_iterator, generator, discriminator, optimizer_g, optimizer_d, exp_gan_lr_scheduler, args.noise_d, args.gp_strength)
+        
     def get_vae_trainer(noise_trainer_iterator, noise_val_iterator, model, args, optimizer, exp_gan_lr_scheduler):
         if args.gan_model_type == 'vae1':
             import trainer.vae as trainer

@@ -28,7 +28,7 @@ def get_args():
                         choices=['mlp'], 
                         help='(default=%(default)s)')
     parser.add_argument('--gan_model_type', default=True, type=str, required=False,
-                        choices=['gan1', 'wgan', 'gan2','gan3', 'gan4'], 
+                        choices=['gan1', 'wgan', 'gan2','gan3', 'gan4','wgan_gp'], 
                         help='(default=%(default)s)')
     parser.add_argument('--seed', type=int, default=0,
                         help='Seeds values to be used; seed introduces randomness by changing order of classes')
@@ -53,6 +53,8 @@ def get_args():
     parser.add_argument('--pdrop', type=float, help='dropout rate')
     parser.add_argument('--mode', default='train', choices=['train', 'eval'])
     parser.add_argument('--model_path', default='None')
+    
+    parser.add_argument('--gp_strength', type=float, default=None, help='strength for gradient penalty in wgan-gp')
     
 #     parser = deepspeed.add_config_arguments(parser)
     args=parser.parse_args()
