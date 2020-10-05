@@ -30,7 +30,9 @@ def get_dataset(name, datatype):
     
 def get_dataset_test(name, datatype):
     if name == '2020_LER_20200922_testset.csv':
-            return SEMI_sample_data(name, num_input=4, num_output=6, num_in_cycle=[232, 289, 277, 253, 255], num_of_cycle=5, x_cols=['PNMOS', 'amp.', 'corr.x', 'corr.y'], y_cols=['Ioff', 'IDSAT', 'IDLIN', 'VTSAT', 'VTLIN', 'SS'], header=0)
+        return SEMI_sample_data(name, num_input=4, num_output=6, num_in_cycle=[232, 289, 277, 253, 255], num_of_cycle=5, x_cols=['PNMOS', 'amp.', 'corr.x', 'corr.y'], y_cols=['Ioff', 'IDSAT', 'IDLIN', 'VTSAT', 'VTLIN', 'SS'], header=0)
+    elif name == '2020_LER_20200804_testset.csv':
+        return SEMI_sample_data(name, num_input=4, num_output=6, num_in_cycle=[50, 50, 50, 50, 50], num_of_cycle=5, x_cols=['PNMOS', 'amp.', 'corr.x', 'corr.y'], y_cols=['Ioff', 'IDSAT', 'IDLIN', 'VTSAT', 'VTLIN', 'SS'], header=0)    
 
         
 def load_data(file_path, datatype, num_input, num_output, num_in_cycle, num_of_cycle, x_cols, y_cols, header):  
@@ -130,11 +132,14 @@ def load_sample_data(file_path, num_input, num_output, num_in_cycle, num_of_cycl
     
     """
     num_total = sum(num_in_cycle)
+    print(num_total)
     
     data_x = pd.read_csv('../'+file_path, header=0, usecols=x_cols)
     data_y = pd.read_csv('../'+file_path, header=0, usecols=y_cols)
         
     data_x =pd.get_dummies(data_x, columns=['PNMOS'])
+    print(data_x)
+    print(data_y)
    
     num_input = data_x.shape[1]
     
@@ -375,7 +380,18 @@ def EMD_each_X(generated_samples, real_samples, num_in_gen, num_in_cycle):
     for i in  range(num_of_cycle):
         generated_samples_cycle = generated_samples[i*num_in_gen : (i+1)*num_in_gen]
         real_samples_cycle = real_samples[i*num_in_cycle : (i+1)*num_in_cycle]
-        EMD, _, _ = cv2.EMD(generated_samples_cycle, real_samples_cycle, cv2.DIST_L2)
+        
+#         for i in range(len(generated_samples_cycle)):
+#             for j in range(len(generated_samples_cycle[i])):
+#                 if generated_samples_cycle[i][j] < 0:
+#                     print(generated_samples_cycle[i][j])
+        
+#         for i in range(len(real_samples_cycle)):
+#             for j in range(len(real_samples_cycle[i])):
+#                 if real_samples_cycle[i][j] < 0:
+#                     print(real_samples_cycle[i][j])
+        
+        EMD, _, _ = cv2.EMD(generated_samples_cycle+100, real_samples_cycle+100, cv2.DIST_L2)
         EMD_score_list.append(EMD)
         
     return np.mean(np.array(EMD_score_list)), EMD_score_list
