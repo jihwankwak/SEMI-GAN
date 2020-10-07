@@ -51,14 +51,13 @@ dataset_test = data_handler.DatasetFactory.get_test_dataset(args)
 # loss result
 result_dict = {}
 
-kwargs = {'num_workers': args.workers}
+kwargs = {'num_workers': 4}
 
 print(torch.cuda.device_count())
 if torch.cuda.device_count() > 1:
     print("Let's use", torch.cuda.device_count(), "GPUs!")
     
 print("Inits...")
-torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
 # ==================================================================================================
 #                                          1. Predict mean 
