@@ -11,13 +11,8 @@ class SemiLoader(td.Dataset):
         
         # normalization
         
-        print(data_x.shape)
-        print(data_y.shape)
-        
         temp_x = (data_x[:,:3] - x_mean[:, :3]) / x_std[:, :3]
-        print(temp_x.shape)
         temp_y = (data_y - y_mean) / y_std
-        print(temp_y.shape)
         
         temp_x = np.hstack((temp_x, np.ones((temp_x.shape[0], 1))))
         temp_x = np.hstack((temp_x, np.zeros((temp_x.shape[0], 1))))

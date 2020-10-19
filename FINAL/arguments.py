@@ -3,7 +3,7 @@ import argparse
 def get_args():
     parser = argparse.ArgumentParser(description='SEMI')
     parser.add_argument('--date', type=str, default='', help='(default=%(default)s)')
-    parser.add_argument('--dataset', default='2020_LER_20200922_V007_testset_edit.csv', type=str, required=False,
+    parser.add_argument('--dataset', default='2020_LER_20201008_V008.xlsx', type=str, required=False,
                         choices=['LER_data_20191125.xlsx',
                                  'LER_data_20191107.xlsx',
                                  '2020_LER_20200529_V004.xlsx',
@@ -43,8 +43,6 @@ def get_args():
     parser.add_argument('--num_of_input', type=int, default=5, help='Number of input for data')
     parser.add_argument('--num_of_output', type=int, default=6, help='Number of output for data')
     parser.add_argument('--sample_num', type=int, default=50, help='sampling number')
-    parser.add_argument('--num_of_cycle', type=int, default=100)
-    parser.add_argument('--num_in_cycle', type=int, default=50)
     parser.add_argument('--pdrop', type=float, default=0.9, help='dropout rate')
     parser.add_argument('--mode', default='train', choices=['train', 'eval'])
 

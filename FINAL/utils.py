@@ -6,9 +6,7 @@ from scipy import linalg
     
     
 def train_mean_std(x, y):
-    
-    print(x.shape, y.shape)
-    
+        
     x_mean = np.mean(x[:,:3], axis=0, dtype=np.float64)
     x_std = np.std(x[:,:3], axis=0, dtype=np.float64)
     

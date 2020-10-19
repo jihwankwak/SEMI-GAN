@@ -1,17 +1,8 @@
 import torch
-# from torch.utils.data import DataLoader, TensorDataset
-# from torchvision import transforms
-
 
 import pandas as pd
-# from pandas import ExcelWriter
-# from pandas import ExcelFile
 import numpy as np
 
-# import matplotlib.pyplot as plt
-# import math
-# import sklearn
-# from sklearn.metrics import r2_score
 import os
 
 def load_data(name):

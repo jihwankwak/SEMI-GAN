@@ -15,7 +15,7 @@ from torch.optim import lr_scheduler
 # Arguments
 args = get_args()
 
-log_name = 'date_{}_data_{}_model_{}_{}_seed_{}_lr_{}_{}_{}_hidden_dim_{}_{}_batch_size_{}_epoch_{}_{}_noise_d_{}_sample_num_{}'.format(
+log_name = 'date_{}_data_{}_model_{}_{}_seed_{}_lr_{}_{}_{}_hidden_dim_{}_{}_batch_size_{}_noise_d_{}_sample_num_{}'.format(
     args.date,
     args.dataset,
     args.mean_model_type,
@@ -27,13 +27,18 @@ log_name = 'date_{}_data_{}_model_{}_{}_seed_{}_lr_{}_{}_{}_hidden_dim_{}_{}_bat
     args.mean_hidden_dim,
     args.gan_hidden_dim,
     args.batch_size,  
-    args.mean_nepochs,
-    args.gan_nepochs,
     args.noise_d,
     args.sample_num
-    )
+)
+
+# Mean model architecture ( naming for training & sampling )
+mean_model_spec = 'data_{}_batch_{}_model_{}_lr_{}'.format(args.dataset, args.batch_size, args.mean_model_type, args.mean_lr)
+
+# gan model architecture ( naming for training & sampling )
+gan_model_spec = 'data_{}_batch_{}_model_{}_noise_d_{}_hidden_dim_{}_lr_g_{}_d_{}'.format(args.dataset, args.batch_size, args.gan_model_type, args.noise_d, args.gan_hidden_dim, args.g_lr, args.d_lr)
 
 if args.pdrop is not None:
+    gan_model_spec += '_pdrop_{}'.format(args.pdrop)
     log_name += '_pdrop_{}'.format(args.pdrop)
 
 print(log_name)
@@ -110,24 +115,25 @@ exp_lr_scheduler = lr_scheduler.StepLR(optimizer, step_size=100, gamma=0.5) # sc
 mean_mytrainer = trainer.TrainerFactory.get_mean_trainer(mean_train_iterator, mean_val_iterator, mean_model, args, optimizer, exp_lr_scheduler)
 
 # trainer
-if args.mode == 'train':
+if args.mode == 'train' and not os.path.isfile('./models/mean/'+mean_model_spec):
 
     for epoch in range(args.mean_nepochs):
 
         train_loss = mean_mytrainer.train()
-
         val_loss, val_r2 = mean_mytrainer.evaluate()
-
         current_lr = mean_mytrainer.current_lr
 
         if((epoch+1)% 10 == 0):
             print("epoch:{:2d}, lr:{:.6f}, || train_loss:{:.6f}, val_loss:{:.6f}, r2_score:{:.6f}".format(epoch, current_lr, train_loss, val_loss, val_r2))
 
     mean_best_model = mean_mytrainer.best_model
-    torch.save(mean_best_model.state_dict(), './models/mean/'+log_name)
+    torch.save(mean_best_model.state_dict(), './models/mean/'+mean_model_spec)
     
-else:
-    mean_mytrainer.model.load_state_dict(torch.load('./models/mean/'+'date_201019_data_2020_LER_20200804_V006.xlsx_model_mlp_gan2_seed_0_lr_5e-05_0.0001_0.0005_hidden_dim_100_100_batch_size_32_epoch_1000_200_noise_d_100_sample_num_250_pdrop_0.8'))
+else:    
+    print()
+    print('Load mean model----------------')
+    print()
+    mean_mytrainer.model.load_state_dict(torch.load('./models/mean/'+mean_model_spec))
     mean_best_model = mean_mytrainer.model
     
 
@@ -181,50 +187,46 @@ exp_gan_lr_scheduler = lr_scheduler.StepLR(optimizer_d, step_size=50, gamma=0.5)
 
 gan_mytrainer = trainer.TrainerFactory.get_gan_trainer(noise_train_iterator, noise_val_iterator, generator, discriminator, args, optimizer_g, optimizer_d, exp_gan_lr_scheduler)
 
-if args.mode == 'train':
+if args.mode == 'train' and not os.path.isfile('./models/generator/'+gan_model_spec):
     for epoch in range(args.gan_nepochs):
 
         gan_mytrainer.train()
-
         p_real, p_fake = gan_mytrainer.evaluate()
-
         current_d_lr = gan_mytrainer.current_d_lr
 
         if((epoch+1)% 10 == 0):
             print("epoch:{:2d}, lr_d:{:.6f}, || p_real:{:.6f}, p_fake:{:.6f}".format(epoch, current_d_lr, p_real, p_fake))
             
     # net.state_dict()
-    torch.save(generator.state_dict(), './models/generator/'+log_name)
-    torch.save(discriminator.state_dict(), './models/discriminator/'+log_name)
-
+    torch.save(generator.state_dict(), './models/generator/'+gan_model_spec)
+    torch.save(discriminator.state_dict(), './models/discriminator/'+gan_model_spec)
 else:
-    gan_mytrainer.G.load_state_dict(torch.load('./models/generator/'+'date_201019_data_2020_LER_20200804_V006.xlsx_model_mlp_gan2_seed_0_lr_5e-05_0.0001_0.0005_hidden_dim_100_100_batch_size_32_epoch_1000_200_noise_d_100_sample_num_250_pdrop_0.8'))
-
-
+    print()
+    print('Load mean model----------------')
+    print()
+    gan_mytrainer.G.load_state_dict(torch.load('./models/generator/'+gan_model_spec))
 
 
 # ==================================================================================================
 #                                          3. Generate Noise
 # ==================================================================================================
 
-if args.gan_model_type == 'gan1' or 'wgan' or 'gan2':
+if args.gan_model_type == 'gan1' or 'wgan' or 'gan2' or 'gan3' or 'gan4' or 'wgan_gp':
     testType = 'gan'
 
 t_classifier = trainer.EvaluatorFactory.get_evaluator(args.sample_num, testType)
 
 # mean result
 print("mean_train mean, std for scaling: ", Y_train_mean, Y_train_std)    
-
 # noise result
 print("noise_train mean, std for scaling: ", noise_Y_train_mean, noise_Y_train_std)
 
 if args.mode == 'eval':
+#   < for past dataset that did not have seperate test datset >
+
 #     test_mean_dataset_loader = data_handler.SemiLoader(dataset.test_X_per_cycle, 
 #                                                        dataset.test_Y_per_cycle, 
-#                                                        X_train_mean, X_train_std, Y_train_mean, Y_train_std)
-    
-    print(dataset_test.test_X_per_cycle.shape, dataset_test.test_Y_per_cycle.shape)
-    
+#                                                        X_train_mean, X_train_std, Y_train_mean, Y_train_std)    
     test_mean_dataset_loader = data_handler.SemiLoader(dataset_test.test_X_per_cycle, 
                                                        dataset_test.test_Y_per_cycle, 
                                                        X_train_mean, X_train_std, Y_train_mean, Y_train_std)
@@ -238,9 +240,9 @@ else:
     
     
 if args.mode == 'train':
-    noise_result, noise_total = t_classifier.noise_sample(mean_result, generator, noise_Y_train_mean, noise_Y_train_std, mean_val_iterator, 5, 6, args.noise_d)
+    noise_result, noise_total = t_classifier.noise_sample(mean_result, generator, noise_Y_train_mean, noise_Y_train_std, mean_val_iterator, args.num_of_input, args.num_of_output, args.noise_d)
 else:
-    noise_result, noise_total = t_classifier.noise_sample(mean_result, generator, noise_Y_train_mean, noise_Y_train_std, test_mean_iterator, 5, 6, args.noise_d)
+    noise_result, noise_total = t_classifier.noise_sample(mean_result, generator, noise_Y_train_mean, noise_Y_train_std, test_mean_iterator, args.num_of_input, args.num_of_output, args.noise_d)
 
 
 # 3: num_of_input
@@ -248,11 +250,9 @@ else:
 
 mean_result = np.repeat(mean_result, args.sample_num, axis=0)
 total_result = noise_result + mean_result
-
-if not os.path.exists('./sample_data'):
-    os.makedirs('./sample_data')
     
 if args.mode == 'train':
     np.save('./sample_data/'+log_name, total_result)
 else:
+#     np.save('./sample_data/'+'old_test_specific'+log_name, total_result)
     np.save('./sample_data/'+'test_specific'+log_name, total_result)
