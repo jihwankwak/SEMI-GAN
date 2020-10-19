@@ -77,7 +77,6 @@ class gan_evaluator():
                 
                 mean = mean.data.cpu().numpy()
                 
-                
                 mean = mean*train_std + train_mean
                 mean_result.append(mean[0].tolist())
                 

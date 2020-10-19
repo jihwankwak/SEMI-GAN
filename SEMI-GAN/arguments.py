@@ -8,10 +8,12 @@ def get_args():
                                  'LER_data_20191107.xlsx',
                                  '2020_LER_20200529_V004.xlsx',
                                 '2020_LER_20200804_V006.xlsx', 
-                                '2020_LER_20200922_V007_testset_edit.csv'], 
+                                '2020_LER_20200922_V007_testset_edit.csv',
+                                '2020_LER_20201008_V008.xlsx'], 
                         help='(default=%(default)s)')
-    parser.add_argument('--dataset_test', default='2020_LER_20200922_testset.csv', type=str, required=False,
-                        choices=['2020_LER_20200922_testset.csv'
+    parser.add_argument('--dataset_test', default='2020_LER_20200922_testset.xlsx', type=str, required=False,
+                        choices=['2020_LER_20200922_testset.csv',
+                                 '2020_LER_20200922_testset.xlsx'
                                 ],
                         help='(default=%(default)s)')
     parser.add_argument('--data_type', default='n', type=str, required=False,
@@ -45,7 +47,7 @@ def get_args():
                         help='input batch size for training (default: 32)')
     parser.add_argument('--mean_nepochs', type=int, default=1000, help='Number of epochs for each mean increment')
     parser.add_argument('--gan_nepochs', type=int, default=200, help='Number of epochs for each gan increment')    
-    parser.add_argument('--num_of_input', type=int, default=4, help='Number of input for data')
+    parser.add_argument('--num_of_input', type=int, default=3, help='Number of input for data')
     parser.add_argument('--num_of_output', type=int, default=6, help='Number of output for data')
     parser.add_argument('--sample_num', type=int, default=50, help='sampling number')
     parser.add_argument('--num_of_cycle', type=int, default=200)

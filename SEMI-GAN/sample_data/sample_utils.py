@@ -168,7 +168,7 @@ def load_sample_data(file_path, num_input, num_output, num_in_cycle, num_of_cycl
       
     return X_all, Y_all, X_per_cycle, Y_per_cycle
 
-def split_data(x, y, num_train, num_val, num_test):
+def split_data(x, y, num_train, num_val):
        
     if len(x) == len(y):
         print("Same number of x data and y data")
@@ -177,23 +177,9 @@ def split_data(x, y, num_train, num_val, num_test):
         print("Different number of x data and y data")
     
     x_train, y_train = x[:num_train], y[:num_train]
-    x_val, y_val = x[num_train:num_train+num_val], y[num_train:num_train+num_val]
-    x_test, y_test = x[num_train+num_val:], y[num_train+num_val:]
+    x_val, y_val = x[num_train:], y[num_train:]
     
-    print("train X: {} train Y: {}".format(x_train.shape, y_train.shape))
-    print("val X: {} val Y: {}".format(x_val.shape, y_val.shape))
-    print("test X: {} test Y: {}".format(x_test.shape, y_test.shape))
-
-    y_train_mean = np.mean(y_train, axis=0, dtype=np.float32)
-    y_train_std = np.std(y_train, axis=0, dtype=np.float32)
-    
-    x_train_mean = np.mean(x_train, axis=0, dtype=np.float32)
-    x_train_std = np.std(x_train, axis=0, dtype=np.float32)
-    
-    print("x mean, std: ", x_train_mean, x_train_std)
-    print("y mean, std: ", y_train_mean, y_train_std)
-    
-    return x_train, y_train, x_val, y_val, x_test, y_test
+    return x_train, y_train, x_val, y_val
     
 
 class Dataset():   
@@ -390,7 +376,7 @@ def EMD_each_X(generated_samples, real_samples, num_in_gen, num_in_cycle):
 #             for j in range(len(real_samples_cycle[i])):
 #                 if real_samples_cycle[i][j] < 0:
 #                     print(real_samples_cycle[i][j])
-        
+
         EMD, _, _ = cv2.EMD(generated_samples_cycle+100, real_samples_cycle+100, cv2.DIST_L2)
         EMD_score_list.append(EMD)
         

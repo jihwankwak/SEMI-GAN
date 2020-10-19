@@ -9,12 +9,12 @@ class ModelFactory():
         
         num_of_input = args.num_of_input
         
-        if args.data_type == 'n' or args.data_type == 'p':
-            num_of_input += 1
-        elif args.data_type == 'none':
-            pass
-        else:
-            num_of_input += 2
+#         if args.data_type == 'n' or args.data_type == 'p':
+#             num_of_input += 1
+#         elif args.data_type == 'none':
+#             pass
+#         else:
+#             num_of_input += 2
         
         if args.mean_model_type == 'mlp':
             
@@ -25,12 +25,12 @@ class ModelFactory():
         
         num_of_input = args.num_of_input
         
-        if args.data_type == 'n' or args.data_type == 'p':
-            num_of_input += 1
-        elif args.data_type == 'none':
-            pass 
-        else:
-            num_of_input += 2
+#         if args.data_type == 'n' or args.data_type == 'p':
+#             num_of_input += 1
+#         elif args.data_type == 'none':
+#             pass 
+#         else:
+#             num_of_input += 2
         
         if args.gan_model_type == 'gan1':
             
