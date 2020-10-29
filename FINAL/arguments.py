@@ -11,8 +11,9 @@ def get_args():
                                 '2020_LER_20200922_V007_testset_edit.csv',
                                 '2020_LER_20201008_V008.xlsx'], 
                         help='(default=%(default)s)')
-    parser.add_argument('--dataset_test', default='2020_LER_20200922_testset.xlsx', type=str, required=False,
-                        choices=['2020_LER_20200922_testset.xlsx'
+    parser.add_argument('--dataset_test', default='2020_LER_20201021_testset.xlsx', type=str, required=False,
+                        choices=['2020_LER_20200922_testset.xlsx',
+                                 '2020_LER_20201021_testset.xlsx'
                                 ],
                         help='(default=%(default)s)')
     parser.add_argument('--trainer', type=str, required=True, 

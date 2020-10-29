@@ -13,3 +13,5 @@ class DatasetFactory:
     def get_test_dataset(args):
         if args.dataset_test == '2020_LER_20200922_testset.xlsx':
             return data.SEMI_sample_data(args.dataset_test)
+        elif args.dataset_test == '2020_LER_20201021_testset.xlsx':
+            return data.SEMI_sample_data(args.dataset_test)
