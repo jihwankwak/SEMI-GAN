@@ -3,6 +3,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F    
 from scipy import linalg
+import random
     
     
 def train_mean_std(x, y):
@@ -89,6 +90,12 @@ def FID_score(generated_samples, real_samples):
     
     
     FID_score = np.sum(mean_diff**2) + np.trace(cov_g + cov_r -2*cov_prod_sqrt)
-    
-    
     return FID_score
+
+def set_seed(seed):
+    torch.manual_seed(seed)
+    # torch.cuda.manual_seed(seed)
+    np.random.seed(seed)
+    random.seed(seed)
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True

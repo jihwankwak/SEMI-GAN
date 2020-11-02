@@ -15,7 +15,7 @@ from torch.optim import lr_scheduler
 # Arguments
 args = get_args()
 
-log_name = 'date_{}_data_{}_model_{}_{}_seed_{}_lr_{}_{}_{}_hidden_dim_{}_{}_batch_size_{}_noise_d_{}_sample_num_{}'.format(
+log_name = 'date_{}_data_{}_model_{}_{}_seed_{}_lr_{}_{}_{}_hidden_dim_{}_{}_batch_size_{}_noise_d_{}_sample_num_{}_tr_num_in_cycle_{}'.format(
     args.date,
     args.dataset,
     args.mean_model_type,
@@ -28,14 +28,16 @@ log_name = 'date_{}_data_{}_model_{}_{}_seed_{}_lr_{}_{}_{}_hidden_dim_{}_{}_bat
     args.gan_hidden_dim,
     args.batch_size,  
     args.noise_d,
-    args.sample_num
+    args.sample_num, args.tr_num_in_cycle
 )
 
+utils.set_seed(args.seed)
+
 # Mean model architecture ( naming for training & sampling )
-mean_model_spec = 'data_{}_batch_{}_model_{}_lr_{}'.format(args.dataset, args.batch_size, args.mean_model_type, args.mean_lr)
+mean_model_spec = 'date_{}_data_{}_batch_{}_model_{}_lr_{}_tr_num_in_cycle_{}'.format(args.date, args.dataset, args.batch_size, args.mean_model_type, args.mean_lr, args.tr_num_in_cycle)
 
 # gan model architecture ( naming for training & sampling )
-gan_model_spec = 'data_{}_batch_{}_model_{}_noise_d_{}_hidden_dim_{}_lr_g_{}_d_{}'.format(args.dataset, args.batch_size, args.gan_model_type, args.noise_d, args.gan_hidden_dim, args.g_lr, args.d_lr)
+gan_model_spec = 'date_{}_data_{}_batch_{}_model_{}_noise_d_{}_hidden_dim_{}_lr_g_{}_d_{}_tr_num_in_cycle_{}'.format(args.date, args.dataset, args.batch_size, args.gan_model_type, args.noise_d, args.gan_hidden_dim, args.g_lr, args.d_lr, args.tr_num_in_cycle)
 
 if args.pdrop is not None:
     gan_model_spec += '_pdrop_{}'.format(args.pdrop)

@@ -9,6 +9,7 @@ import torch.nn.functional as F
 from sklearn.metrics import r2_score
 
 from tqdm import tqdm
+import copy
 
 class MeanTrainer(trainer.mean_GenericTrainer):
     def __init__(self, train_iterator, val_iterator, mean_model, optimizer, exp_lr_scheduler):
@@ -81,7 +82,7 @@ class MeanTrainer(trainer.mean_GenericTrainer):
         val_r2 = r2_score(true_arr, pred_arr)
         
         if val_loss < self.best_loss:
-            self.best_model = self.model.copy()
+            self.best_model = copy.deepcopy(self.model)
             self.best_loss = val_loss
             self.best_mean = pred_arr
             

@@ -46,6 +46,7 @@ def get_args():
     parser.add_argument('--sample_num', type=int, default=50, help='sampling number')
     parser.add_argument('--pdrop', type=float, default=0.9, help='dropout rate')
     parser.add_argument('--mode', default='train', choices=['train', 'eval'])
+    parser.add_argument('--tr_num_in_cycle', type=int, default=50, help='number of cycle in tr_X')    
 
 
     
