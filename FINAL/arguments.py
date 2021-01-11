@@ -11,19 +11,21 @@ def get_args():
                                 '2020_LER_20200922_V007_testset_edit.csv',
                                 '2020_LER_20201008_V008.xlsx'], 
                         help='(default=%(default)s)')
-    parser.add_argument('--dataset_test', default='2020_LER_20201021_testset.xlsx', type=str, required=False,
+    parser.add_argument('--dataset_test', default='2020_LER_20201102_testset_V04.xlsx', type=str, required=False,
                         choices=['2020_LER_20200922_testset.xlsx',
-                                 '2020_LER_20201021_testset.xlsx'
+                                 '2020_LER_20201021_testset.xlsx',
+                                 '2020_LER_20201102_testset_V04.xlsx'
                                 ],
                         help='(default=%(default)s)')
     parser.add_argument('--trainer', type=str, required=True, 
-                        choices=['gan', 
+                        choices=['gan',
+                                 'wgan'
                                 ])
     parser.add_argument('--mean_model_type', required=True, type=str,
                         choices=['mlp'], 
                         help='(default=%(default)s)')
     parser.add_argument('--gan_model_type', default=True, type=str, required=False,
-                        choices=['gan1', 'gan2'], 
+                        choices=['gan1', 'gan2', 'gan3', 'gan4', 'wgan'], 
                         help='(default=%(default)s)')
     parser.add_argument('--seed', type=int, default=0,
                         help='Seeds values to be used; seed introduces randomness by changing order of classes')

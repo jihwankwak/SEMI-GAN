@@ -76,7 +76,8 @@ torch.set_default_tensor_type('torch.cuda.FloatTensor')
 # ==================================================================================================
 
 ### 상수설정
-X_train_mean, X_train_std, Y_train_mean, Y_train_std = utils.train_mean_std(dataset.train_X, dataset.train_Y)
+# X_train_mean, X_train_std, Y_train_mean, Y_train_std = utils.train_mean_std(dataset.train_X, dataset.train_Y)
+X_train_mean, X_train_std, Y_train_mean, Y_train_std = utils.train_mean_std(dataset.train_X_per_cycle, dataset.train_Y_per_cycle)
 
 print(" Assign mean, std for Training data ")
 print("X train mean, std", X_train_mean, X_train_std)
@@ -207,7 +208,6 @@ else:
     print('Load mean model----------------')
     print()
     gan_mytrainer.G.load_state_dict(torch.load('./models/generator/'+gan_model_spec))
-
 
 # ==================================================================================================
 #                                          3. Generate Noise
