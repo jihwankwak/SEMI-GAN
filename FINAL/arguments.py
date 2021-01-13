@@ -3,15 +3,17 @@ import argparse
 def get_args():
     parser = argparse.ArgumentParser(description='SEMI')
     parser.add_argument('--date', type=str, default='', help='(default=%(default)s)')
-    parser.add_argument('--dataset', default='2020_LER_20201008_V008.xlsx', type=str, required=False,
+    parser.add_argument('--dataset', default='2020_LER_20201008_V008.xlsx', type=str,
                         choices=['LER_data_20191125.xlsx',
                                  'LER_data_20191107.xlsx',
                                  '2020_LER_20200529_V004.xlsx',
                                 '2020_LER_20200804_V006.xlsx', 
                                 '2020_LER_20200922_V007_testset_edit.csv',
-                                '2020_LER_20201008_V008.xlsx'], 
+                                '2020_LER_20201008_V008.xlsx'
+                                ],
                         help='(default=%(default)s)')
-    parser.add_argument('--dataset_test', default='2020_LER_20201102_testset_V04.xlsx', type=str, required=False,
+                                 
+    parser.add_argument('--dataset_test', default='2020_LER_20201102_testset_V04.xlsx', type=str,
                         choices=['2020_LER_20200922_testset.xlsx',
                                  '2020_LER_20201021_testset.xlsx',
                                  '2020_LER_20201102_testset_V04.xlsx'

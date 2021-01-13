@@ -6,14 +6,14 @@ from scipy import linalg
 import random
     
     
-def train_mean_std(x, y):
+def train_mean_std(args, x, y):
         
-    x_mean = np.mean(x[:,:3], axis=0, dtype=np.float64)
-    x_std = np.std(x[:,:3], axis=0, dtype=np.float64)
+    x_mean = np.mean(x[:,:args.num_of_input-2], axis=0, dtype=np.float64)
+    x_std = np.std(x[:,:args.num_of_input-2], axis=0, dtype=np.float64)
     
     
-    x_mean = x_mean.reshape(1, 3)
-    x_std = x_std.reshape(1, 3)
+    x_mean = x_mean.reshape(1, args.num_of_input-2)
+    x_std = x_std.reshape(1, args.num_of_input-2)
     
     x_mean = np.hstack((x_mean, np.ones((x_mean.shape[0], 1))))
     x_std = np.hstack((x_std, np.ones((x_std.shape[0], 1))))

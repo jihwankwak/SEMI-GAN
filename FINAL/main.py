@@ -77,18 +77,18 @@ torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
 ### 상수설정
 # X_train_mean, X_train_std, Y_train_mean, Y_train_std = utils.train_mean_std(dataset.train_X, dataset.train_Y)
-X_train_mean, X_train_std, Y_train_mean, Y_train_std = utils.train_mean_std(dataset.train_X_per_cycle, dataset.train_Y_per_cycle)
+X_train_mean, X_train_std, Y_train_mean, Y_train_std = utils.train_mean_std(args, dataset.train_X_per_cycle, dataset.train_Y_per_cycle)
 
 print(" Assign mean, std for Training data ")
 print("X train mean, std", X_train_mean, X_train_std)
 print("Y train mean, std", Y_train_mean, Y_train_std)
 
 
-mean_train_dataset_loader = data_handler.SemiLoader(dataset.train_X_per_cycle, 
+mean_train_dataset_loader = data_handler.SemiLoader(args, dataset.train_X_per_cycle, 
                                                     dataset.train_Y_per_cycle, 
                                                     X_train_mean, X_train_std, Y_train_mean, Y_train_std)
 
-mean_val_dataset_loader = data_handler.SemiLoader(dataset.val_X_per_cycle, 
+mean_val_dataset_loader = data_handler.SemiLoader(args, dataset.val_X_per_cycle, 
                                                   dataset.val_Y_per_cycle,
                                                   X_train_mean, X_train_std, Y_train_mean, Y_train_std)
 
@@ -145,17 +145,17 @@ else:
 # ==================================================================================================
 
 ### 상수설정
-noise_X_train_mean, noise_X_train_std, noise_Y_train_mean, noise_Y_train_std = utils.train_mean_std(dataset.train_X, dataset.train_Y_noise)
+noise_X_train_mean, noise_X_train_std, noise_Y_train_mean, noise_Y_train_std = utils.train_mean_std(args, dataset.train_X, dataset.train_Y_noise)
 
 print(" Assign mean, std for Training data ")
 print("X train mean, std", noise_X_train_mean, noise_X_train_std)
 print("Y train mean, std", noise_Y_train_mean, noise_Y_train_std)
 
-noise_train_dataset_loader = data_handler.SemiLoader(dataset.train_X, 
+noise_train_dataset_loader = data_handler.SemiLoader(args, dataset.train_X, 
                                                      dataset.train_Y_noise, 
                                                      noise_X_train_mean, noise_X_train_std, noise_Y_train_mean, noise_Y_train_std)
 
-noise_val_dataset_loader = data_handler.SemiLoader(dataset.val_X, 
+noise_val_dataset_loader = data_handler.SemiLoader(args, dataset.val_X, 
                                                    dataset.val_Y_noise, 
                                                    noise_X_train_mean, noise_X_train_std, noise_Y_train_mean, noise_Y_train_std)
 
@@ -226,10 +226,10 @@ print("noise_train mean, std for scaling: ", noise_Y_train_mean, noise_Y_train_s
 if args.mode == 'eval':
 #   < for past dataset that did not have seperate test datset >
 
-#     test_mean_dataset_loader = data_handler.SemiLoader(dataset.test_X_per_cycle, 
+#     test_mean_dataset_loader = data_handler.SemiLoader(args, dataset.test_X_per_cycle, 
 #                                                        dataset.test_Y_per_cycle, 
 #                                                        X_train_mean, X_train_std, Y_train_mean, Y_train_std)    
-    test_mean_dataset_loader = data_handler.SemiLoader(dataset_test.test_X_per_cycle, 
+    test_mean_dataset_loader = data_handler.SemiLoader(args, dataset_test.test_X_per_cycle, 
                                                        dataset_test.test_Y_per_cycle, 
                                                        X_train_mean, X_train_std, Y_train_mean, Y_train_std)
     
@@ -251,6 +251,7 @@ else:
 # 6: num_of_output
 
 mean_result = np.repeat(mean_result, args.sample_num, axis=0)
+print("mean_result", mean_result)
 total_result = noise_result + mean_result
     
 if args.mode == 'train':

@@ -4,14 +4,14 @@ import numpy as np
 
 
 class SemiLoader(td.Dataset):
-    def __init__(self, data_x, data_y, x_mean, x_std, y_mean, y_std):
+    def __init__(self, args, data_x, data_y, x_mean, x_std, y_mean, y_std):
                    
         self.data_x = data_x
         self.data_y = data_y
         
         # normalization
         
-        temp_x = (data_x[:,:3] - x_mean[:, :3]) / x_std[:, :3]
+        temp_x = (data_x[:,:args.num_of_input-2] - x_mean[:, :args.num_of_input-2]) / x_std[:, :args.num_of_input-2]
         temp_y = (data_y - y_mean) / y_std
         
         temp_x = np.hstack((temp_x, np.ones((temp_x.shape[0], 1))))
