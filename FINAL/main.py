@@ -34,10 +34,10 @@ log_name = 'date_{}_data_{}_model_{}_{}_seed_{}_lr_{}_{}_{}_hidden_dim_{}_{}_bat
 utils.set_seed(args.seed)
 
 # Mean model architecture ( naming for training & sampling )
-mean_model_spec = 'date_{}_data_{}_batch_{}_model_{}_lr_{}_tr_num_in_cycle_{}'.format(args.date, args.dataset, args.batch_size, args.mean_model_type, args.mean_lr, args.tr_num_in_cycle)
+mean_model_spec = 'date_{}_data_{}_batch_{}_model_{}_hidden_dim_{}_lr_{}_tr_num_in_cycle_{}'.format(args.date, args.dataset, args.batch_size, args.mean_model_type, args.mean_hidden_dim, args.mean_lr, args.tr_num_in_cycle)
 
 # gan model architecture ( naming for training & sampling )
-gan_model_spec = 'date_{}_data_{}_batch_{}_model_{}_noise_d_{}_hidden_dim_{}_lr_g_{}_d_{}_tr_num_in_cycle_{}'.format(args.date, args.dataset, args.batch_size, args.gan_model_type, args.noise_d, args.gan_hidden_dim, args.g_lr, args.d_lr, args.tr_num_in_cycle)
+gan_model_spec = 'date_{}_data_{}_batch_{}_model_{}_{}_noise_d_{}_hidden_dim_{}_{}_lr_g_{}_d_{}_tr_num_in_cycle_{}'.format(args.date, args.dataset, args.batch_size, args.mean_model_type, args.gan_model_type, args.noise_d, args.mean_hidden_dim, args.gan_hidden_dim, args.g_lr, args.d_lr, args.tr_num_in_cycle)
 
 if args.pdrop is not None:
     gan_model_spec += '_pdrop_{}'.format(args.pdrop)
@@ -76,8 +76,10 @@ torch.set_default_tensor_type('torch.cuda.FloatTensor')
 # ==================================================================================================
 
 ### 상수설정
-# X_train_mean, X_train_std, Y_train_mean, Y_train_std = utils.train_mean_std(dataset.train_X, dataset.train_Y)
-X_train_mean, X_train_std, Y_train_mean, Y_train_std = utils.train_mean_std(args, dataset.train_X_per_cycle, dataset.train_Y_per_cycle)
+if args.mean_model_type == 'mlp':
+    X_train_mean, X_train_std, Y_train_mean, Y_train_std = utils.train_mean_std(args, dataset.train_X, dataset.train_Y)
+elif args.mean_model_type == 'mlp_constant':
+    X_train_mean, X_train_std, Y_train_mean, Y_train_std = utils.train_mean_std(args, dataset.train_X_per_cycle, dataset.train_Y_per_cycle)
 
 print(" Assign mean, std for Training data ")
 print("X train mean, std", X_train_mean, X_train_std)

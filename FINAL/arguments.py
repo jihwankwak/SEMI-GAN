@@ -24,10 +24,10 @@ def get_args():
                                  'wgan'
                                 ])
     parser.add_argument('--mean_model_type', required=True, type=str,
-                        choices=['mlp'], 
+                        choices=['mlp', 'mlp_constant'], 
                         help='(default=%(default)s)')
     parser.add_argument('--gan_model_type', default=True, type=str, required=False,
-                        choices=['gan1', 'gan2', 'gan3', 'gan4', 'wgan'], 
+                        choices=['gan1', 'gan2', 'gan3', 'gan4', 'gan5', 'wgan', 'wgan2', 'wgan3', 'wgan4'], 
                         help='(default=%(default)s)')
     parser.add_argument('--seed', type=int, default=0,
                         help='Seeds values to be used; seed introduces randomness by changing order of classes')

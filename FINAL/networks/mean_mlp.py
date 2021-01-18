@@ -6,6 +6,7 @@ import torch.nn.functional as F
 class Net(nn.Module):
     def __init__(self, mean_hidden_dim, num_of_input, num_of_output):
         super(Net, self).__init__()
+        print(num_of_input, mean_hidden_dim)
         self.fc1 = nn.Linear(num_of_input, mean_hidden_dim)
         self.fc2 = nn.Linear(mean_hidden_dim, mean_hidden_dim)
         self.fc3 = nn.Linear(mean_hidden_dim, mean_hidden_dim)

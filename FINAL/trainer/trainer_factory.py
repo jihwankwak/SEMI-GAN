@@ -11,18 +11,18 @@ class TrainerFactory():
     
     @staticmethod
     def get_mean_trainer(train_iterator, val_iterator, mean_model, args, optimizer, exp_lr_scheduler):
-        if args.mean_model_type == 'mlp':
+        if 'mlp' in args.mean_model_type:
             import trainer.mean as trainer
             
             return trainer.MeanTrainer(train_iterator, val_iterator, mean_model, optimizer, exp_lr_scheduler)
     
     def get_gan_trainer(noise_trainer_iterator, noise_val_iterator, generator, discriminator, args, optimizer_g, optimizer_d, exp_gan_lr_scheduler):
-        if args.gan_model_type == 'gan1' or args.gan_model_type == 'gan2' or args.gan_model_type == 'gan3' or args.gan_model_type == 'gan4' or args.gan_model_type == 'gan_deep':
+        if args.gan_model_type == 'gan1' or args.gan_model_type == 'gan2' or args.gan_model_type == 'gan3' or args.gan_model_type == 'gan4' or args.gan_model_type == 'gan_deep' or args.gan_model_type == 'gan5':
             import trainer.gan1 as trainer
             
             return trainer.GanTrainer(noise_trainer_iterator, noise_val_iterator, generator, discriminator, optimizer_g, optimizer_d, exp_gan_lr_scheduler, args.noise_d)
         
-        elif args.gan_model_type == 'wgan': 
+        elif 'wgan' in args.gan_model_type: 
             import trainer.wgan as trainer
             
             return trainer.GanTrainer(noise_trainer_iterator, noise_val_iterator, generator, discriminator, optimizer_g, optimizer_d, exp_gan_lr_scheduler, args.noise_d)
