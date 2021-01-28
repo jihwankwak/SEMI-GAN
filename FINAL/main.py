@@ -136,7 +136,7 @@ if args.mode == 'train' and not os.path.isfile('./models/mean/'+mean_model_spec)
     
 else:    
     print()
-    print('Load mean model----------------')
+    print('Load mean model-------- --------')
     print()
     mean_mytrainer.model.load_state_dict(torch.load('./models/mean/'+mean_model_spec))
     mean_best_model = mean_mytrainer.model
@@ -187,6 +187,7 @@ optimizer_g = torch.optim.Adam(generator.parameters(), lr = args.g_lr)
 optimizer_d = torch.optim.Adam(discriminator.parameters(), lr = args.d_lr)
 
 exp_gan_lr_scheduler = lr_scheduler.StepLR(optimizer_d, step_size=50, gamma=0.5)
+# exp_gan_lr_scheduler = lr_scheduler.ReduceLROnPlateau(optimizer_d, mode='min', factor=0.5, patience=20, threshold=1e-5, verbose=True, min_lr = 1e-6)
 
 # trainer
 
