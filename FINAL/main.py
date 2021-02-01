@@ -121,6 +121,8 @@ mean_mytrainer = trainer.TrainerFactory.get_mean_trainer(mean_train_iterator, me
 
 # trainer
 if args.mode == 'train' and not os.path.isfile('./models/mean/'+mean_model_spec):
+    
+    t_mean_start = time.time()
 
     for epoch in range(args.mean_nepochs):
 
@@ -130,6 +132,8 @@ if args.mode == 'train' and not os.path.isfile('./models/mean/'+mean_model_spec)
 
         if((epoch+1)% 10 == 0):
             print("epoch:{:2d}, lr:{:.6f}, || train_loss:{:.6f}, val_loss:{:.6f}, r2_score:{:.6f}".format(epoch, current_lr, train_loss, val_loss, val_r2))
+            
+    t_mean_end = time.time()
 
     mean_best_model = mean_mytrainer.best_model
     torch.save(mean_best_model.state_dict(), './models/mean/'+mean_model_spec)
@@ -194,6 +198,9 @@ exp_gan_lr_scheduler = lr_scheduler.StepLR(optimizer_d, step_size=50, gamma=0.5)
 gan_mytrainer = trainer.TrainerFactory.get_gan_trainer(noise_train_iterator, noise_val_iterator, generator, discriminator, args, optimizer_g, optimizer_d, exp_gan_lr_scheduler)
 
 if args.mode == 'train' and not os.path.isfile('./models/generator/'+gan_model_spec):
+    
+    t_noise_start = time.time()
+    
     for epoch in range(args.gan_nepochs):
 
         gan_mytrainer.train()
@@ -203,6 +210,7 @@ if args.mode == 'train' and not os.path.isfile('./models/generator/'+gan_model_s
         if((epoch+1)% 10 == 0):
             print("epoch:{:2d}, lr_d:{:.6f}, || p_real:{:.6f}, p_fake:{:.6f}".format(epoch, current_d_lr, p_real, p_fake))
             
+    t_noise_end = time.time()
     # net.state_dict()
     torch.save(generator.state_dict(), './models/generator/'+gan_model_spec)
     torch.save(discriminator.state_dict(), './models/discriminator/'+gan_model_spec)
@@ -247,7 +255,9 @@ else:
 if args.mode == 'train':
     noise_result, noise_total = t_classifier.noise_sample(mean_result, generator, noise_Y_train_mean, noise_Y_train_std, mean_val_iterator, args.num_of_input, args.num_of_output, args.noise_d)
 else:
+    t_gen_start = time.time()
     noise_result, noise_total = t_classifier.noise_sample(mean_result, generator, noise_Y_train_mean, noise_Y_train_std, test_mean_iterator, args.num_of_input, args.num_of_output, args.noise_d)
+    t_gen_end = time.time()
 
 
 # 3: num_of_input
@@ -258,7 +268,9 @@ print("mean_result", mean_result)
 total_result = noise_result + mean_result
     
 if args.mode == 'train':
+    print("train time: ", t_noise_end+t_noise_end-t_mean_start-t_noise_start)
     np.save('./sample_data/'+log_name, total_result)
 else:
+    print("gen time: ", t_gen_end-t_gen_start)
 #     np.save('./sample_data/'+'old_test_specific'+log_name, total_result)
     np.save('./sample_data/'+'test_specific'+log_name, total_result)
