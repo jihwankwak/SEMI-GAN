@@ -291,8 +291,8 @@ def EMD_from_2d_kde_integral(normalized_generated_samples, normalized_real_sampl
     normalized_real_samples_2d = normalized_real_samples[:,[index_x, index_y]]
     normalized_generated_samples_2d = normalized_generated_samples[:,[index_x, index_y]]
 
-    kde_real = stats.gaussian_kde(normalized_real_samples_2d.T)
-    kde_gen = stats.gaussian_kde(normalized_generated_samples_2d.T)
+    kde_real = stats.gaussian_kde(normalized_real_samples_2d.T, bw_method='silverman')
+    kde_gen = stats.gaussian_kde(normalized_generated_samples_2d.T, bw_method='silverman')
 
     # Estimate distribution
     # density_real = kde_real(position_cartesian.T) #2by100 입력 -> 1by100 출력
@@ -335,8 +335,8 @@ def EMD_from_1d_kde_integral(normalized_generated_samples, normalized_real_sampl
     normalized_real_samples_1d = normalized_real_samples[:,[index_x]]
     normalized_generated_samples_1d = normalized_generated_samples[:,[index_x]]
 
-    kde_real = stats.gaussian_kde(normalized_real_samples_1d.T)
-    kde_gen = stats.gaussian_kde(normalized_generated_samples_1d.T)
+    kde_real = stats.gaussian_kde(normalized_real_samples_1d.T, bw_method='silverman')
+    kde_gen = stats.gaussian_kde(normalized_generated_samples_1d.T, bw_method='silverman')
 
     # Estimate distribution
     #density_real = kde_real(position_cartesian.T)

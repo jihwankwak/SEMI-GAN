@@ -7,8 +7,7 @@ class TrainerFactory():
     def __init__(self):
         pass
     
-    # GAN trainer
-    
+    # GAN trainer    
     @staticmethod
     def get_mean_trainer(train_iterator, val_iterator, mean_model, args, optimizer, exp_lr_scheduler):
         if 'mlp' in args.mean_model_type:
@@ -41,7 +40,7 @@ class TrainerFactory():
         
     # Gaussian trainer
     def get_trainer(train_iterator, val_iterator, model, args, optimizer, exp_lr_scheduler):
-        if args.trainer == 'gaussian':
+        if args.trainer == 'linear_gaussian'or'mlp_gaussian':
             import trainer.mean as trainer
             
             return trainer.MeanTrainer(train_iterator, val_iterator, model, optimizer, exp_lr_scheduler)

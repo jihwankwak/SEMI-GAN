@@ -21,16 +21,23 @@ def get_args():
                         help='(default=%(default)s)')
     parser.add_argument('--trainer', type=str, required=True, 
                         choices=['gan',
-                                 'wgan'
+                                 'wgan',
+                                 'linear_gaussian',
+                                 'mlp_gaussian'
                                 ])
-    parser.add_argument('--mean_model_type', required=True, type=str,
+    parser.add_argument('--model_type', required=False, type=str,
+                        choices=['linear_gaussian','mlp_gaussian'], 
+                        help='(default=%(default)s)')
+    parser.add_argument('--mean_model_type', required=False, type=str,
                         choices=['mlp', 'mlp_constant'], 
                         help='(default=%(default)s)')
-    parser.add_argument('--gan_model_type', default=True, type=str, required=False,
+    parser.add_argument('--gan_model_type', default=False, type=str, required=False,
                         choices=['gan1', 'gan2', 'gan3', 'gan4', 'gan5', 'wgan', 'wgan2', 'wgan3', 'wgan4', 'gan6'], 
                         help='(default=%(default)s)')
     parser.add_argument('--seed', type=int, default=0,
                         help='Seeds values to be used; seed introduces randomness by changing order of classes')
+    parser.add_argument('--lr', type=float, default=5e-5,
+                        help='learning rate for gaussian (default: 5e-5. Note that lr is decayed by args.gamma parameter args.schedule ')
     parser.add_argument('--mean_lr', type=float, default=5e-5,
                         help='learning rate (default: 5e-5. Note that mean_lr is decayed by args.gamma parameter args.schedule ')
     parser.add_argument('--g_lr', type=float, default=0.0001,
@@ -42,6 +49,7 @@ def get_args():
     parser.add_argument('--gan_hidden_dim', default=100, type=int, required=False, help='(default=%(default)d)')
     parser.add_argument('--batch_size', type=int, default=32, metavar='N',
                         help='input batch size for training (default: 32)')
+    parser.add_argument('--gaussian_nepochs', type=int, default=1000, help='Number of epochs for each gaussian')
     parser.add_argument('--mean_nepochs', type=int, default=1000, help='Number of epochs for each mean increment')
     parser.add_argument('--gan_nepochs', type=int, default=200, help='Number of epochs for each gan increment')    
     parser.add_argument('--workers', type=int, default=0, help='Number of workers in Dataloaders')

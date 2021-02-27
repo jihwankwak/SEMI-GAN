@@ -87,19 +87,20 @@ class ModelFactory():
             import networks.vae1 as gan
             return gan.VAE(noise_d, hidden_dim, num_of_output, num_of_input)
 
+        
     def get_gaussian_model(args):
         
         num_of_input = args.num_of_input
-        num_of_output = ((args.num_of_output)**2 - args.num_of_output)//2 + args.num_of_output*2
+        num_of_output = ((args.num_of_output)**2 - args.num_of_output)//2 + args.num_of_output*2 #mean+cov+diagonal
         
-        if args.data_type == 'n' or args.data_type == 'p':
-            num_of_input += 1
-        elif args.data_type == 'none':
-            pass 
-        else:
-            num_of_input += 2
             
-        if args.trainer == 'gaussian':
+        if args.trainer == 'linear_gaussian':
             
-            import networks.mean_mlp as gaussian
-            return gaussian.Net(mean_hidden_dim=args.mean_hidden_dim, num_of_input=num_of_input, num_of_output=num_of_output)
+            import networks.linear_gaussian as gaussian
+            return gaussian.Net(num_of_input=num_of_input, num_of_output=num_of_output) # activation 함수가 없음
+        
+        elif args.trainer == 'mlp_gaussian':
+            num_of_hidden = args.mean_hidden_dim
+            
+            import networks.mlp_gaussian as gaussian
+            return gaussian.Net(num_of_hidden, num_of_input=num_of_input, num_of_output=num_of_output) # activation 함수가 없음

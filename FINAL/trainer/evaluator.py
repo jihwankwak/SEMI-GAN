@@ -10,13 +10,13 @@ class EvaluatorFactory():
         pass
     
     @staticmethod
-    def get_evaluator(sample_num, testType='gan'):
+    def get_evaluator(sample_num, num_output, testType='gan'):
         if testType == 'gan':
             return gan_evaluator(sample_num)
         elif testType == 'vae':
             return vae_evaluator(sample_num)
         elif testType == 'gaussian':
-            return gaussian_evaluator(sample_num)
+            return gaussian_evaluator(sample_num, num_output)
         elif testType == 'naive_gan': #
             return naive_gan_evaluator(sample_num) #
         
@@ -215,3 +215,85 @@ class naive_gan_evaluator():
         print("noise_result_size: ", y_hat_result.shape)
         
         return y_hat_result, total
+
+    
+    
+class gaussian_evaluator():
+    
+    def __init__(self, sample_num, num_output):
+
+        self.sample_num = sample_num
+        self.prob = {}
+        self.num_output = num_output
+        
+    def mean_cov_sample(self, best_model, test_iterator):
+        
+        mean_cov_result = np.array([]).reshape((0,(self.num_output**2-self.num_output)//2 + self.num_output*2))
+        total = 0
+
+        best_model.eval()
+        
+        for i, data in enumerate(test_iterator):
+            data_x, data_y = data
+            data_x, data_y = data_x.cuda(), data_y.cuda()
+            
+            mini_batch_size = len(data_x)
+            
+            with torch.autograd.no_grad():
+                y_mean_cov = best_model(data_x)
+                
+                y_mean_cov = y_mean_cov.data.cpu().numpy()
+                
+                
+                mean_cov_result = np.vstack([mean_cov_result, y_mean_cov])
+                
+            
+                total += mini_batch_size
+        
+        mean_cov_result = np.array(mean_cov_result)
+        #print('final_mean_cov_result',mean_cov_result.shape)   
+        
+
+        return mean_cov_result, total
+    
+    def sample(self, mean_cov_result, Y_train_mean, Y_train_std, total):
+        
+        mean_cov_result = mean_cov_result*Y_train_std + Y_train_mean
+        
+        result = np.array([]).reshape((0,self.num_output))
+        #mean_cov_result = mean_cov_result*train_std + train_mean
+        
+        for i in range(total):
+            
+            temp_result = []
+            
+            # mean
+            mean = mean_cov_result[i,:self.num_output]
+            
+            # covariance
+            cov = np.zeros((self.num_output, self.num_output))
+            
+            cnt1 = self.num_output*2
+            for k in range(1, self.num_output):
+                cov[k,:k], cov[:k, k] = mean_cov_result[i, cnt1:cnt1+k], mean_cov_result[i, cnt1:cnt1+k]
+                cnt1 += k
+                       
+            for l in range(self.num_output):
+                cov[l,l] = mean_cov_result[i, self.num_output+l]        
+            
+            
+            print('mean', mean)
+            print('cov', cov)
+
+
+            temp_result = np.random.multivariate_normal(mean=mean, cov=cov, size=self.sample_num)
+            
+            
+            #print('temp_result.shpae', temp_result.shape)
+            result = np.vstack([result,temp_result])
+                
+        result = np.array(result)
+        
+        print("result size: ", result.shape)
+        
+        return result
