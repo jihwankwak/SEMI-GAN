@@ -221,7 +221,8 @@ else:
 if args.gan_model_type == 'gan1' or 'wgan' or 'gan2' or 'gan3' or 'gan4' or 'wgan_gp':
     testType = 'naive_gan'
 
-t_classifier = trainer.EvaluatorFactory.get_evaluator(args.sample_num, testType)
+print(testType)
+t_classifier = trainer.EvaluatorFactory.get_evaluator(args.sample_num, args.num_of_output, testType)
 
 # mean result
 print("mean_train mean, std for scaling: ", Y_train_mean, Y_train_std)    
