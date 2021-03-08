@@ -191,6 +191,9 @@ exp_gan_lr_scheduler = lr_scheduler.StepLR(optimizer_d, step_size=50, gamma=0.5)
 gan_mytrainer = trainer.TrainerFactory.get_gan_trainer(train_iterator, val_iterator, generator, discriminator, args, optimizer_g, optimizer_d, exp_gan_lr_scheduler) #
 
 if args.mode == 'train' and not os.path.isfile('./models/generator/'+gan_model_spec):
+    
+    t_start = time.time()
+    
     for epoch in range(args.gan_nepochs):
 
         gan_mytrainer.train()
@@ -200,6 +203,7 @@ if args.mode == 'train' and not os.path.isfile('./models/generator/'+gan_model_s
         if((epoch+1)% 10 == 0):
             print("epoch:{:2d}, lr_d:{:.6f}, || p_real:{:.6f}, p_fake:{:.6f}".format(epoch, current_d_lr, p_real, p_fake))
             
+    t_end = time.time()
     # net.state_dict()
     torch.save(generator.state_dict(), './models/generator/'+gan_model_spec)
     torch.save(discriminator.state_dict(), './models/discriminator/'+gan_model_spec)
@@ -254,7 +258,9 @@ if args.mode == 'eval':
 if args.mode == 'train':
     total_result, total_num = t_classifier.sample(generator, Y_train_mean, Y_train_std, train_X_iterator, args.num_of_input, args.num_of_output, args.noise_d)
 else:
+    t_gen_start = time.time()
     total_result, total_num = t_classifier.sample(generator, Y_train_mean, Y_train_std, test_X_iterator, args.num_of_input, args.num_of_output, args.noise_d)
+    t_gen_end = time.time()
 
 
 # # 3: num_of_input
@@ -265,8 +271,12 @@ else:
 # total_result = noise_result + mean_result
     
 if args.mode == 'train':
+    print("train time: ", t_end-t_start)
+
     np.save('./sample_data/'+log_name, total_result)
 
 else:
+    print("gen time: ", t_gen_end-t_gen_start)
+
 #     np.save('./sample_data/'+'old_test_specific'+log_name, total_result)
     np.save('./sample_data/'+'test_specific'+log_name, total_result)
