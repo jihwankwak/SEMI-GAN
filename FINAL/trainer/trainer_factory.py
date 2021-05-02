@@ -24,7 +24,7 @@ class TrainerFactory():
         elif 'wgan' in args.gan_model_type: 
             import trainer.wgan as trainer
             
-            return trainer.GanTrainer(noise_trainer_iterator, noise_val_iterator, generator, discriminator, optimizer_g, optimizer_d, exp_gan_lr_scheduler, args.noise_d)
+            return trainer.GanTrainer(noise_trainer_iterator, noise_val_iterator, generator, discriminator, optimizer_g, optimizer_d, exp_gan_lr_scheduler, args.noise_d, args.clipping)
         
         elif args.gan_model_type == 'wgan_gp':
             import trainer.wgan_gp as trainer
@@ -68,7 +68,7 @@ class gan_GenericTrainer:
     """
     Base class for gan trainer
     """
-    def __init__(self, noise_trainer_iterator, noise_val_iterator, generator, discriminator, optimizer_g, optimizer_d, exp_gan_lr_scheduler, noise_d):
+    def __init__(self, noise_trainer_iterator, noise_val_iterator, generator, discriminator, optimizer_g, optimizer_d, exp_gan_lr_scheduler, noise_d, clipping):
         self.train_iterator = noise_trainer_iterator
         self.val_iterator = noise_val_iterator
         
@@ -82,6 +82,7 @@ class gan_GenericTrainer:
         self.current_d_lr = None
         
         self.noise_d = noise_d
+        self.clipping = clipping
         
         self.prob = {'p_real_train':[], 'p_fake_train':[], 'p_real_val':[], 'p_fake_val':[]}
         

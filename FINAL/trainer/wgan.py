@@ -11,9 +11,9 @@ import torch.nn.functional as F
 from tqdm import tqdm
 
 class GanTrainer(trainer.gan_GenericTrainer):
-    def __init__(self, noise_trainer_iterator, noise_val_iterator, generator, discriminator, optimizer_g, optimizer_d, exp_gan_lr_scheduler, noise_d):
-        super().__init__(noise_trainer_iterator, noise_val_iterator, generator, discriminator, optimizer_g, optimizer_d, exp_gan_lr_scheduler, noise_d)
-                
+    def __init__(self, noise_trainer_iterator, noise_val_iterator, generator, discriminator, optimizer_g, optimizer_d, exp_gan_lr_scheduler, noise_d, clipping):
+        super().__init__(noise_trainer_iterator, noise_val_iterator, generator, discriminator, optimizer_g, optimizer_d, exp_gan_lr_scheduler, noise_d, clipping)
+                        
     def train(self):
         
         p_real_list = []
@@ -62,9 +62,9 @@ class GanTrainer(trainer.gan_GenericTrainer):
             self.optimizer_D.zero_grad()
             c_loss.backward()
             self.optimizer_D.step()
-            
+                        
             for p in self.D.parameters():
-                p.data.clamp_(-0.01, 0.01)
+                p.data.clamp_(-1*self.clipping, self.clipping)
             
         self.prob['p_real_train'].append(c_real)
         self.prob['p_fake_train'].append(c_fake)
