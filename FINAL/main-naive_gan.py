@@ -37,7 +37,7 @@ utils.set_seed(args.seed)
 # mean_model_spec = 'date_{}_data_{}_batch_{}_model_{}_lr_{}_tr_num_in_cycle_{}'.format(args.date, args.dataset, args.batch_size, args.mean_model_type, args.mean_lr, args.tr_num_in_cycle)
 
 # gan model architecture ( naming for training & sampling )
-gan_model_spec = 'naive_date_{}_data_{}_batch_{}_model_{}_noise_d_{}_hidden_dim_{}_lr_g_{}_d_{}_tr_num_in_cycle_{}'.format(args.date, args.dataset, args.batch_size, args.gan_model_type, args.noise_d, args.gan_hidden_dim, args.g_lr, args.d_lr, args.tr_num_in_cycle)
+gan_model_spec = 'naive_date_{}_data_{}_batch_{}_model_{}_noise_d_{}_hidden_dim_{}_lr_g_{}_d_{}_tr_num_in_cycle_{}_seed_{}'.format(args.date, args.dataset, args.batch_size, args.gan_model_type, args.noise_d, args.gan_hidden_dim, args.g_lr, args.d_lr, args.tr_num_in_cycle, args.seed)
 
 if args.pdrop is not None:
     gan_model_spec += '_pdrop_{}'.format(args.pdrop)
@@ -56,6 +56,7 @@ dataset = data_handler.DatasetFactory.get_dataset(args)
 
 # Test specific dataset
 dataset_test = data_handler.DatasetFactory.get_test_dataset(args)
+print(dataset_test)
 
 # loss result
 result_dict = {}
@@ -147,6 +148,8 @@ torch.set_default_tensor_type('torch.cuda.FloatTensor')
 ### 상수설정
 X_train_mean, X_train_std, Y_train_mean, Y_train_std = utils.train_mean_std(args, dataset.train_X, dataset.train_Y) #
 
+print("@@@@@@@debug@@@@@@@@", X_train_mean, X_train_std, Y_train_mean, Y_train_std)
+
 print(" Assign mean, std for Training data ")
 print("X train mean, std", X_train_mean, X_train_std) #
 print("Y train mean, std", Y_train_mean, Y_train_std) #
@@ -155,15 +158,24 @@ train_dataset_loader = data_handler.SemiLoader(args, dataset.train_X,
                                                      dataset.train_Y, 
                                                      X_train_mean, X_train_std, Y_train_mean, Y_train_std) #
 
-val_dataset_loader = data_handler.SemiLoader(args, dataset.val_X, 
-                                                   dataset.val_Y, 
-                                                   X_train_mean, X_train_std, Y_train_mean, Y_train_std) #
+print("val")
+
+val_dataset_loader = data_handler.SemiLoader(args, dataset.val_X_per_cycle, 
+                                                    dataset.val_Y_per_cycle, 
+                                                    X_train_mean, X_train_std, Y_train_mean, Y_train_std)
+
+
+# val_dataset_loader = data_handler.SemiLoader(args, dataset.val_X, 
+#                                                    dataset.val_Y, 
+#                                                    X_train_mean, X_train_std, Y_train_mean, Y_train_std) #
 
 # Dataloader
 
 train_iterator = torch.utils.data.DataLoader(train_dataset_loader, batch_size=args.batch_size, shuffle=True, **kwargs) #
 
-val_iterator = torch.utils.data.DataLoader(val_dataset_loader, batch_size=1, shuffle=False, **kwargs) #
+val_iterator = torch.utils.data.DataLoader(val_dataset_loader, batch_size=1, shuffle=True, **kwargs)
+
+# val_iterator = torch.utils.data.DataLoader(val_dataset_loader, batch_size=1, shuffle=False, **kwargs) #
 
 # model
 
@@ -229,13 +241,6 @@ print("mean_train mean, std for scaling: ", Y_train_mean, Y_train_std)
 
 
 
-train_X_dataset_loader = data_handler.SemiLoader(args, dataset.train_X_per_cycle, 
-                                                    dataset.train_Y_per_cycle, 
-                                                    X_train_mean, X_train_std, Y_train_mean, Y_train_std)
-
-train_X_iterator = torch.utils.data.DataLoader(train_X_dataset_loader, batch_size=args.batch_size, shuffle=True, **kwargs)
-
-
 if args.mode == 'eval':
   #< for past dataset that did not have seperate test datset >
 
@@ -243,12 +248,12 @@ if args.mode == 'eval':
 #                                                        dataset.test_Y_per_cycle, 
 #                                                        X_train_mean, X_train_std, Y_train_mean, Y_train_std)    
 
-    test_X_dataset_loader = data_handler.SemiLoader(args, dataset_test.test_X_per_cycle, 
+    test_dataset_loader = data_handler.SemiLoader(args, dataset_test.test_X_per_cycle, 
                                                        dataset_test.test_Y_per_cycle, 
                                                        X_train_mean, X_train_std, Y_train_mean, Y_train_std)
     
     
-    test_X_iterator = torch.utils.data.DataLoader(test_X_dataset_loader, batch_size=1, shuffle=False)
+    test_iterator = torch.utils.data.DataLoader(test_dataset_loader, batch_size=1, shuffle=False)
     
 # if args.mode == 'train':
 #     mean_result, mean_total = t_classifier.mean_sample(mean_best_model, Y_train_mean, Y_train_std, mean_train_iterator)
@@ -257,10 +262,10 @@ if args.mode == 'eval':
     
     
 if args.mode == 'train':
-    total_result, total_num = t_classifier.sample(generator, Y_train_mean, Y_train_std, train_X_iterator, args.num_of_input, args.num_of_output, args.noise_d)
+    total_result, total_num = t_classifier.sample(generator, Y_train_mean, Y_train_std, val_iterator, args.num_of_input, args.num_of_output, args.noise_d)
 else:
     t_gen_start = time.time()
-    total_result, total_num = t_classifier.sample(generator, Y_train_mean, Y_train_std, test_X_iterator, args.num_of_input, args.num_of_output, args.noise_d)
+    total_result, total_num = t_classifier.sample(generator, Y_train_mean, Y_train_std, test_iterator, args.num_of_input, args.num_of_output, args.noise_d)
     t_gen_end = time.time()
 
 

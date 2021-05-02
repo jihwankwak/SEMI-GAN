@@ -5,19 +5,31 @@ import numpy as np
 
 class SemiLoader(td.Dataset):
     def __init__(self, args, data_x, data_y, x_mean, x_std, y_mean, y_std):
-                   
+        
+        # data_x : 7-dim
+        # data_y : 6-dim
+        # x_mean, x_std : 4-dim
+        # y_mean, y_std : 6-dim
+        
         self.data_x = data_x
+#         print(self.data_x)
         self.data_y = data_y
         
         # normalization
+       
+        print("debug normalization")
+#         print(data_x.shape)
+#         print(data_x[:,args.num_of_input-3:])
+#         print(data_x[:,args.num_of_input-3:].shape)
+        data_type = data_x[:,args.num_of_input-3:].reshape(-1,3)
         
-        temp_x = (data_x[:,:args.num_of_input-2] - x_mean[:, :args.num_of_input-2]) / x_std[:, :args.num_of_input-2]
+        temp_x = (data_x[:,:args.num_of_input-3] - x_mean) / x_std
         temp_y = (data_y - y_mean) / y_std
-        
-        temp_x = np.hstack((temp_x, np.ones((temp_x.shape[0], 1))))
-        temp_x = np.hstack((temp_x, np.zeros((temp_x.shape[0], 1))))
+                
+        temp_x = np.hstack((temp_x, data_type))
         
         self.data_x = temp_x
+#         print(self.data_x)
         self.data_y = temp_y
         
     def __len__(self):

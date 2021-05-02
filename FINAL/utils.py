@@ -7,19 +7,17 @@ import random
     
     
 def train_mean_std(args, x, y):
-        
-    x_mean = np.mean(x[:,:args.num_of_input-2], axis=0, dtype=np.float64)
-    x_std = np.std(x[:,:args.num_of_input-2], axis=0, dtype=np.float64)
     
+    data_type = x[0][args.num_of_input-3:].reshape(1, -1)
     
-    x_mean = x_mean.reshape(1, args.num_of_input-2)
-    x_std = x_std.reshape(1, args.num_of_input-2)
+    x_mean = np.mean(x[:,:args.num_of_input-3], axis=0, dtype=np.float64)
+    x_std = np.std(x[:,:args.num_of_input-3], axis=0, dtype=np.float64)
     
-    x_mean = np.hstack((x_mean, np.ones((x_mean.shape[0], 1))))
-    x_std = np.hstack((x_std, np.ones((x_std.shape[0], 1))))
+    x_mean = x_mean.reshape(1, args.num_of_input-3)
+    x_std = x_std.reshape(1, args.num_of_input-3)
     
-    x_mean = np.hstack((x_mean, np.zeros((x_mean.shape[0], 1))))
-    x_std = np.hstack((x_std, np.zeros((x_std.shape[0], 1))))
+#     x_mean = np.hstack((x_mean, data_type))
+#     x_std = np.hstack((x_std, data_type))
         
     y_mean = np.mean(y, axis=0, dtype=np.float64)
     y_std = np.std(y, axis=0, dtype=np.float64)
@@ -33,19 +31,19 @@ def normalize_train(x, y, x_mean, x_std, y_mean, y_std):
     
     return norm_x, norm_y
 
-def normalize(x, y):
+# def normalize(x, y):
         
-    x_mean = np.mean(x, axis=0, dtype=np.float32)
-    x_std = np.std(x, axis=0, dtype=np.float32)
+#     x_mean = np.mean(x, axis=0, dtype=np.float32)
+#     x_std = np.std(x, axis=0, dtype=np.float32)
         
-    y_mean = np.mean(y, axis=0, dtype=np.float32)
-    y_std = np.std(1e+10*y, axis=0, dtype=np.float32)
+#     y_mean = np.mean(y, axis=0, dtype=np.float32)
+#     y_std = np.std(1e+10*y, axis=0, dtype=np.float32)
 
-    norm_x = ( x - x_mean ) / (x_std)
-    norm_y = ( y - y_mean )*1e+10 / (y_std)
+#     norm_x = ( x - x_mean ) / (x_std)
+#     norm_y = ( y - y_mean )*1e+10 / (y_std)
        
-    y_std = y_std / 1e+10
-    return norm_x, norm_y, x_mean, x_std, y_mean, y_std
+#     y_std = y_std / 1e+10
+#     return norm_x, norm_y, x_mean, x_std, y_mean, y_std
 
 def init_params(model):
     for p in model.parameters():

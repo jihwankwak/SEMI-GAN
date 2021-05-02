@@ -11,7 +11,7 @@ def load_data_3(name, tr_num_in_cycle):
 
     X_all, Y_all, X_per_cycle, Y_per_cycle, Y_mean_cov = data[0], data[1], data[2], data[3], data[4]
 
-    print("============ Data load =============")
+    print("============ Train Data load =============")
     print("X data shape: ", X_all.shape, "X per cycle data shape:", X_per_cycle.shape)
     print("Y data shape: ", Y_all.shape, "Y per cycle data shape:", Y_per_cycle.shape)  
     print("any nan in X?: ", np.argwhere(np.isnan(X_all)))
@@ -41,7 +41,7 @@ def load_data_2(name, tr_num_in_cycle):
 
     X_all, Y_all, X_per_cycle, Y_per_cycle = data[0], data[1], data[2], data[3]
 
-    print("============ Data load =============")
+    print("============ Train Data load =============")
     print("X data shape: ", X_all.shape, "X per cycle data shape:", X_per_cycle.shape)
     print("Y data shape: ", Y_all.shape, "Y per cycle data shape:", Y_per_cycle.shape)  
     print("any nan in X?: ", np.argwhere(np.isnan(X_all)))
@@ -92,7 +92,7 @@ def split_data(x, y, num_train, num_val):
     x_val, y_val = x[num_train:num_train+num_val], y[num_train:num_train+num_val]
     x_test, y_test = x[num_train+num_val:], y[num_train+num_val:]
     
-    print("============= Data split ==============")
+    print("============= Train val Data split ==============")
     print("train X: {} train Y: {}".format(x_train.shape, y_train.shape))
     print("val X: {} val Y: {}".format(x_val.shape, y_val.shape))
     print("test X: {} test Y: {}".format(x_test.shape, y_test.shape))
@@ -212,7 +212,7 @@ class SEMI_sample_data(Dataset):
     
         X_all, Y_all, X_per_cycle, Y_per_cycle = data[0], data[1], data[2], data[3]
         
-        print("============ Data load =============")
+        print("============ Test Data load =============")
         print("test X data shape: ", X_all.shape, "test X per cycle data shape:", X_per_cycle.shape)
         print("test Y data shape: ", Y_all.shape, "test Y per cycle data shape:", Y_per_cycle.shape)  
         print("any nan in test X?: ", np.argwhere(np.isnan(X_all)))
