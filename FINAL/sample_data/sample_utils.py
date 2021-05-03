@@ -396,7 +396,6 @@ def EMD_all_pair_each_X_integral(generated_samples, real_samples, num_coordinate
     normalized_max_list = (max_list-xy_mean)/xy_std
     
     for i in range(num_of_cycle):
-        print('cycle',i)
         generated_samples_cycle = generated_samples[sum(num_in_gen_list[:i]):sum(num_in_gen_list[:i])+num_in_gen_list[i]]
         real_samples_cycle = real_samples[sum(num_in_real_list[:i]):sum(num_in_real_list[:i])+num_in_real_list[i]]
         
