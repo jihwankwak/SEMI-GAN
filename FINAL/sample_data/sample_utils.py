@@ -30,7 +30,7 @@ def FID_score(generated_samples, real_samples):
     
     #numerical instability of linalg.sqrtm
     #https://github.com/mseitzer/pytorch-fid/blob/master/pytorch_fid/fid_score.py
-    eps=1e-6
+    eps=1e-6s
     if not np.isfinite(cov_prod_sqrt).all():
         offset = np.eye(cov_g.shape[0]) * eps
         cov_prod_sqrt = linalg.sqrtm((cov_g + offset).dot(cov_r + offset))
@@ -291,7 +291,7 @@ def EMD_from_2d_kde_integral(normalized_generated_samples, normalized_real_sampl
     normalized_real_samples_2d = normalized_real_samples[:,[index_x, index_y]]
     normalized_generated_samples_2d = normalized_generated_samples[:,[index_x, index_y]]
 
-    kde_real = stats.gaussian_kde(normalized_real_samples_2d.T, bw_method='silverman')
+    kde_real = stats.gaussian_kde(normalized_real_samples_2d.T, bw_method='silverman') # silverman
     kde_gen = stats.gaussian_kde(normalized_generated_samples_2d.T, bw_method='silverman')
 
     # Estimate distribution

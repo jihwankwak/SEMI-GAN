@@ -68,7 +68,7 @@ class gan_GenericTrainer:
     """
     Base class for gan trainer
     """
-    def __init__(self, noise_trainer_iterator, noise_val_iterator, generator, discriminator, optimizer_g, optimizer_d, exp_gan_lr_scheduler, noise_d, clipping):
+    def __init__(self, noise_trainer_iterator, noise_val_iterator, generator, discriminator, optimizer_g, optimizer_d, exp_gan_lr_scheduler, noise_d, clipping=None):
         self.train_iterator = noise_trainer_iterator
         self.val_iterator = noise_val_iterator
         

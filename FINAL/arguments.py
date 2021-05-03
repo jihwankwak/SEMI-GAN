@@ -15,7 +15,8 @@ def get_args():
                                  'rdfwfv_train2020_RDFWFV_20201222_V10.xlsx',
                                  'wfv_train2020_RDFWFV_20201222_V10.xlsx',
                                  'rdf_train2020_RDFWFV_20201222_V10.xlsx',
-                                 'rdfwfv_wfv_train2020_RDFWFV_20201222_V10.xlsx'
+                                 'rdfwfv_wfv_train2020_RDFWFV_20201222_V10.xlsx',
+                                 'rdfwfv_wfv_rdf_train2020_RDFWFV_20201222_V10.xlsx'
                                 ],
                         help='(default=%(default)s)')
                                  
@@ -25,9 +26,10 @@ def get_args():
                                  '2020_LER_20201102_testset_V04.xlsx',
                                  '2020_LER_20201008_V008.xlsxadd_x_all',
                                  'rdfwfv_test2020_RDFWFV_20201222_V10.xlsx',
-                                 'wfv_train2020_RDFWFV_20201222_V10.xlsx',
-                                 'rdf_train2020_RDFWFV_20201222_V10.xlsx',
-                                 'rdfwfv_wfv_train2020_RDFWFV_20201222_V10.xlsx'
+                                 'wfv_test2020_RDFWFV_20201222_V10.xlsx',
+                                 'rdf_test2020_RDFWFV_20201222_V10.xlsx',
+                                 'rdfwfv_wfv_test2020_RDFWFV_20201222_V10.xlsx',
+                                 'rdfwfv_wfv_rdf_test2020_RDFWFV_20201222_V10.xlsx'
                                 ],
                         help='(default=%(default)s)')
     parser.add_argument('--trainer', type=str, required=True, 

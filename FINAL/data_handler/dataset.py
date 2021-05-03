@@ -87,7 +87,8 @@ def split_data(x, y, num_train, num_val):
         len_total = len(x)
     else:
         print("Different number of x data and y data")
-    
+   
+    print(num_train, num_val)
     x_train, y_train = x[:num_train], y[:num_train]
     x_val, y_val = x[num_train:num_train+num_val], y[num_train:num_train+num_val]
     x_test, y_test = x[num_train+num_val:], y[num_train+num_val:]

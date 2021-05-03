@@ -277,7 +277,7 @@ else:
 # total_result = noise_result + mean_result
     
 if args.mode == 'train':
-    print("train time: ", t_end-t_start)
+#     print("train time: ", t_end-t_start)
 
     np.save('./sample_data/'+log_name, total_result)
 
