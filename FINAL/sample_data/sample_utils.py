@@ -286,7 +286,7 @@ def FID_score_each_X(generated_samples, real_samples, num_in_gen, num_in_cycle):
 
 def EMD_from_2d_kde_integral(normalized_generated_samples, normalized_real_samples, index_x, index_y, num_coordinate, normalized_x_min, normalized_x_max, normalized_y_min, normalized_y_max): #각 joint pair 별로 2d sample을 kde로 fittining시키고 얻은 pdf값을 weight로 삼아 histogram 만들어서 EMD
 
-    position_cartesian = np.array(np.meshgrid(np.linspace(normalized_x_min, normalized_x_max, num_coordinate), np.linspace(normalized_y_min, normalized_x_max, num_coordinate))).T.reshape(-1,2)
+    position_cartesian = np.array(np.meshgrid(np.linspace(normalized_x_min, normalized_x_max, num_coordinate), np.linspace(normalized_y_min, normalized_y_max, num_coordinate))).T.reshape(-1,2)
 
     normalized_real_samples_2d = normalized_real_samples[:,[index_x, index_y]]
     normalized_generated_samples_2d = normalized_generated_samples[:,[index_x, index_y]]
@@ -301,8 +301,8 @@ def EMD_from_2d_kde_integral(normalized_generated_samples, normalized_real_sampl
 
 
     # Estimate probability
-    interval_x = (normalized_x_max - normalized_x_min)/num_coordinate
-    interval_y = (normalized_y_max - normalized_y_min)/num_coordinate
+    interval_x = (normalized_x_max - normalized_x_min)/(num_coordinate-1)
+    interval_y = (normalized_y_max - normalized_y_min)/(num_coordinate-1)
     interval = np.array([interval_x, interval_y])
 
     integral_real = np.zeros((num_coordinate**2, 1))
@@ -344,7 +344,7 @@ def EMD_from_1d_kde_integral(normalized_generated_samples, normalized_real_sampl
 
 
     # Estimate probability
-    interval = (normalized_x_max - normalized_x_min)/num_coordinate
+    interval = (normalized_x_max - normalized_x_min)/(num_coordinate-1)
     integral_real = np.zeros((num_coordinate,1))
     integral_gen = np.zeros((num_coordinate,1))
     for i in range(num_coordinate):
@@ -396,6 +396,7 @@ def EMD_all_pair_each_X_integral(generated_samples, real_samples, num_coordinate
     normalized_max_list = (max_list-xy_mean)/xy_std
     
     for i in range(num_of_cycle):
+        print('cycle',i)
         generated_samples_cycle = generated_samples[sum(num_in_gen_list[:i]):sum(num_in_gen_list[:i])+num_in_gen_list[i]]
         real_samples_cycle = real_samples[sum(num_in_real_list[:i]):sum(num_in_real_list[:i])+num_in_real_list[i]]
         
