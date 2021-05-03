@@ -30,7 +30,7 @@ def FID_score(generated_samples, real_samples):
     
     #numerical instability of linalg.sqrtm
     #https://github.com/mseitzer/pytorch-fid/blob/master/pytorch_fid/fid_score.py
-    eps=1e-6s
+    eps=1e-6
     if not np.isfinite(cov_prod_sqrt).all():
         offset = np.eye(cov_g.shape[0]) * eps
         cov_prod_sqrt = linalg.sqrtm((cov_g + offset).dot(cov_r + offset))
