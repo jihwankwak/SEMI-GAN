@@ -42,6 +42,11 @@ gan_model_spec = 'naive_date_{}_data_{}_batch_{}_model_{}_noise_d_{}_hidden_dim_
 if args.pdrop is not None:
     gan_model_spec += '_pdrop_{}'.format(args.pdrop)
     log_name += '_pdrop_{}'.format(args.pdrop)
+    
+if args.clipping is not None:
+    gan_model_spec += '_clipping_{}'.format(args.clipping)
+    log_name += '_clipping_{}'.format(args.clipping)
+    
 
 print(log_name)
 

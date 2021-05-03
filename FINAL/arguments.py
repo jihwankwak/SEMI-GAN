@@ -69,10 +69,10 @@ def get_args():
     parser.add_argument('--num_of_input', type=int, default=5, help='Number of input for data')
     parser.add_argument('--num_of_output', type=int, default=6, help='Number of output for data')
     parser.add_argument('--sample_num', type=int, default=50, help='sampling number')
-    parser.add_argument('--pdrop', type=float, default=0.9, help='dropout rate')
+    parser.add_argument('--pdrop', type=float, default=None, help='dropout rate')
     parser.add_argument('--mode', default='train', choices=['train', 'eval'])
     parser.add_argument('--tr_num_in_cycle', type=int, default=50, help='number of cycle in tr_X')
-    parser.add_argument('--clipping', default=0.01, type=float, help='weight clipping for wgan')
+    parser.add_argument('--clipping', default=None, type=float, help='weight clipping for wgan')
 #     parser = deepspeed.add_config_arguments(parser)
     args=parser.parse_args()
 
