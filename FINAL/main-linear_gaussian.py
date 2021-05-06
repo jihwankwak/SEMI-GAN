@@ -20,13 +20,20 @@ log_name = 'linear_gaussian_date_{}_data_{}_seed_{}_lr_{}_batch_size_{}_sample_n
     args.dataset,
     args.seed,
     args.lr,    
-    args.batch_size,  
+    args.batch_size, 
     args.sample_num, args.tr_num_in_cycle
 )
 
 utils.set_seed(args.seed)
 
-model_spec = 'linear_gaussian_date_{}_data_{}_batch_{}_lr_{}_tr_num_in_cycle_{}'.format(args.date, args.dataset, args.batch_size, args.lr, args.tr_num_in_cycle)
+model_spec = 'linear_gaussian_date_{}_data_{}_seed_{}_lr_{}_batch_size_{}_sample_num_{}_tr_num_in_cycle_{}'.format(
+    args.date,
+    args.dataset,
+    args.seed,
+    args.lr,    
+    args.batch_size, 
+    args.sample_num, args.tr_num_in_cycle
+)
 
 if args.pdrop is not None:
     model_spec += '_pdrop_{}'.format(args.pdrop)
@@ -95,7 +102,7 @@ print(model)
 
 
 # scheduler
-optimizer = torch.optim.Adam(model.parameters(), lr = args.g_lr)
+optimizer = torch.optim.Adam(model.parameters(), lr = args.lr)
 
 
 exp_lr_scheduler = lr_scheduler.StepLR(optimizer, step_size=50, gamma=0.5)

@@ -6,7 +6,7 @@ class ModelFactory():
     
     @staticmethod
     def get_mean_model(args):
-   
+
         if 'mlp' in args.mean_model_type:
             print('sk')
             import networks.mean_mlp as mean_mlp

@@ -22,9 +22,9 @@ class DatasetFactory:
             elif args.dataset == 'rdfwfv_wfv_rdf_train2020_RDFWFV_20201222_V10.xlsx':
                 return data.SEMI_gaussian_data(args.dataset, num_in_cycle=args.tr_num_in_cycle, num_of_cycle=200, num_train=175, num_val=25) 
                 
-                
-                
-           
+
+
+
         elif args.trainer == 'gan' or 'wgan':
             # LER
             if args.dataset == '2020_LER_20200804_V006.xlsx':

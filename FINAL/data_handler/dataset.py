@@ -87,7 +87,7 @@ def split_data(x, y, num_train, num_val):
         len_total = len(x)
     else:
         print("Different number of x data and y data")
-   
+
     print(num_train, num_val)
     x_train, y_train = x[:num_train], y[:num_train]
     x_val, y_val = x[num_train:num_train+num_val], y[num_train:num_train+num_val]
@@ -167,10 +167,10 @@ class SEMI_gan_data(Dataset):
         X_all, Y_all, X_per_cycle, Y_per_cycle = load_data_2(name, num_in_cycle)
         
         # STEP 2: Split data
-       
+
         self.train_X, self.train_Y, self.val_X, self.val_Y, self.test_X, self.test_Y = split_data(X_all, Y_all, num_train*num_in_cycle, num_val*num_in_cycle)
         self.train_X_per_cycle, self.train_Y_per_cycle, self.val_X_per_cycle, self.val_Y_per_cycle, self.test_X_per_cycle, self.test_Y_per_cycle = split_data(X_per_cycle, Y_per_cycle, num_train, num_val)
- 
+
         # OPTIONAL: Split data for Y_mean, Y_noise
         
         self.train_Y_mean = np.repeat(self.train_Y_per_cycle, num_in_cycle, axis=0)
@@ -199,7 +199,7 @@ class SEMI_gaussian_data(Dataset):
         X_all, Y_all, X_per_cycle, Y_per_cycle, Y_mean_cov = load_data_3(name, num_in_cycle)
         
         # STEP 2: Split data
-       
+
         self.train_X, self.train_Y, self.val_X, self.val_Y, self.test_X, self.test_Y = split_data(X_all, Y_all, num_train*num_in_cycle, num_val*num_in_cycle)
         self.train_X_per_cycle, self.train_Y_per_cycle, self.val_X_per_cycle, self.val_Y_per_cycle, self.test_X_per_cycle, self.test_Y_per_cycle = split_data(X_per_cycle, Y_per_cycle, num_train, num_val)
         self.train_X_per_cycle, self.train_Y_mean_cov, self.val_X_per_cycle, self.val_Y_mean_cov, self.test_X_per_cycle, self.test_Y_mean_cov  = split_data(X_per_cycle, Y_mean_cov, num_train, num_val)

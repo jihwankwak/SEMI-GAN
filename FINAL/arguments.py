@@ -16,7 +16,8 @@ def get_args():
                                  'wfv_train2020_RDFWFV_20201222_V10.xlsx',
                                  'rdf_train2020_RDFWFV_20201222_V10.xlsx',
                                  'rdfwfv_wfv_train2020_RDFWFV_20201222_V10.xlsx',
-                                 'rdfwfv_wfv_rdf_train2020_RDFWFV_20201222_V10.xlsx'
+                                 'rdfwfv_wfv_rdf_train2020_RDFWFV_20201222_V10.xlsx',
+                                 'rdf_test2020_RDFWFV_20201222_V10.xlsx'
                                 ],
                         help='(default=%(default)s)')
                                  
