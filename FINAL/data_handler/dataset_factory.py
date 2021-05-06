@@ -20,7 +20,9 @@ class DatasetFactory:
             elif args.dataset == 'rdfwfv_wfv_train2020_RDFWFV_20201222_V10.xlsx':
                 return data.SEMI_gaussian_data(args.dataset, num_in_cycle=args.tr_num_in_cycle, num_of_cycle=150, num_train=135, num_val=15)
             elif args.dataset == 'rdfwfv_wfv_rdf_train2020_RDFWFV_20201222_V10.xlsx':
-                return data.SEMI_gaussian_data(args.dataset, num_in_cycle=args.tr_num_in_cycle, num_of_cycle=200, num_train=175, num_val=25) 
+                return data.SEMI_gaussian_data(args.dataset, num_in_cycle=args.tr_num_in_cycle, num_of_cycle=200, num_train=175, num_val=25)
+            elif args.dataset == 'rdfwfv_rdf_train2020_RDFWFV_20201222_V10.xlsx':
+                return data.SEMI_gaussian_data(args.dataset, num_in_cycle=args.tr_num_in_cycle, num_of_cycle=150, num_train=135, num_val=15)
                 
 
 
@@ -37,17 +39,17 @@ class DatasetFactory:
             elif args.dataset == 'rdfwfv_train2020_RDFWFV_20201222_V10.xlsx':
                 return data.SEMI_gan_data(args.dataset, num_in_cycle=args.tr_num_in_cycle, num_of_cycle=100, num_train=90, num_val=10)
             elif args.dataset == 'wfv_train2020_RDFWFV_20201222_V10.xlsx':
-                print(2)
                 return data.SEMI_gan_data(args.dataset, num_in_cycle=args.tr_num_in_cycle, num_of_cycle=50, num_train=45, num_val=5)
             
             elif args.dataset == 'rdf_train2020_RDFWFV_20201222_V10.xlsx':
-                print(1)
                 return data.SEMI_gan_data(args.dataset, num_in_cycle=args.tr_num_in_cycle, num_of_cycle=50, num_train=45, num_val=5)
             
             elif args.dataset == 'rdfwfv_wfv_train2020_RDFWFV_20201222_V10.xlsx':
                 return data.SEMI_gan_data(args.dataset, num_in_cycle=args.tr_num_in_cycle, num_of_cycle=150, num_train=135, num_val=15)
             elif args.dataset == 'rdfwfv_wfv_rdf_train2020_RDFWFV_20201222_V10.xlsx':
-                return data.SEMI_gan_data(args.dataset, num_in_cycle=args.tr_num_in_cycle, num_of_cycle=200, num_train=175, num_val=25) 
+                return data.SEMI_gan_data(args.dataset, num_in_cycle=args.tr_num_in_cycle, num_of_cycle=200, num_train=175, num_val=25)
+            elif args.dataset == 'rdfwfv_rdf_train2020_RDFWFV_20201222_V10.xlsx':
+                return data.SEMI_gan_data(args.dataset, num_in_cycle=args.tr_num_in_cycle, num_of_cycle=150, num_train=135, num_val=15)
             
             
         
