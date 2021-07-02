@@ -15,18 +15,19 @@ from torch.optim import lr_scheduler
 # Arguments
 args = get_args()
 
-log_name = 'mlp_gaussian_date_{}_data_{}_seed_{}_lr_{}_batch_size_{}_sample_num_{}_tr_num_in_cycle_{}_epoch_{}'.format(
+log_name = 'mlp_gaussian_date_{}_data_{}_seed_{}_lr_{}_hidden_{}_batch_size_{}_sample_num_{}_tr_num_in_cycle_{}_epoch_{}'.format(
     args.date,
     args.dataset,
     args.seed,
-    args.lr,    
-    args.batch_size,  
+    args.lr,
+    args.mean_hidden_dim,
+    args.batch_size,
     args.sample_num, args.tr_num_in_cycle, args.gaussian_nepochs
 )
 
 utils.set_seed(args.seed)
 
-model_spec = 'mlp_gaussian_date_{}_data_{}_batch_{}_lr_{}_tr_num_in_cycle_{}_epoch_{}'.format(args.date, args.dataset, args.batch_size, args.lr, args.tr_num_in_cycle, args.gaussian_nepochs)
+model_spec = 'mlp_gaussian_date_{}_data_{}_batch_{}_lr_{}_hidden_{}_tr_num_in_cycle_{}_epoch_{}'.format(args.date, args.dataset, args.batch_size, args.lr, args.mean_hidden_dim, args.tr_num_in_cycle, args.gaussian_nepochs)
 
 # if args.pdrop is not None:
 #     model_spec += '_pdrop_{}'.format(args.pdrop)
