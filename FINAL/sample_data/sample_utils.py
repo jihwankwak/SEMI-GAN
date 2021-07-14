@@ -411,7 +411,7 @@ def EMD_1d_2d_list_integral(normalized_generated_samples, normalized_real_sample
 def new_EMD_all_pair_each_X_integral(generated_samples, real_samples, real_bin_num, num_of_cycle, min_list, max_list, train_mean, train_std, minmax, check): #여러 X에 대해 각각 쪼개서, 모든 pair(36가지)에 대한 EMD list를 모아서 뱉는 함수.
     dim = real_samples.shape[1]
     
-    EMD_score_list = [] x
+    EMD_score_list = []
     sink_score_list = []
     
     xy_mean = train_mean
@@ -588,8 +588,8 @@ def EMD_test_v4(gen_samples, real_samples, index_x, index_y, x_max, y_max, x_min
         plt.scatter(normalized_position_cartesian[:,0],normalized_position_cartesian[:,1],color='black')
         plt.show()
     
-
-    wass = sinkhorn2(integral_real, integral_gen, M, 1.0, numItermax=1000)
+    wass = 0
+#     wass = sinkhorn2(integral_real, integral_gen, M, 1.0, numItermax=1000)
 
 #     print(real_weight_position)
 #     print(gen_weight_position)
@@ -693,13 +693,17 @@ def EMD_test_v5(gen_samples, real_samples, index, sample_max, sample_min, real_m
     M = np.sqrt(M)
 #     print(M)
     
-    if check ==True: 
+#     print(normalized_position_cartesian.flatten().tolist())
+    if check == True: 
         plt.plot(normalized_position_cartesian.flatten(),kde_real(normalized_position_cartesian.T), color='blue')
         plt.plot(normalized_position_cartesian.flatten(),kde_gen(normalized_position_cartesian.T), color='orange')
+#         plt.hist(integral_real.flatten(), bins=[normalized_position_cartesian.flatten().tolist()], color='blue')
+#         plt.hist(integral_gen.flatten(), bins=[normalized_position_cartesian.flatten().tolist()], color='orange')
         plt.show()
+     
    
-
-    wass = sinkhorn2(integral_real, integral_gen, M, 1.0, numItermax=1000)
+    wass = 0
+#     wass = sinkhorn2(integral_real, integral_gen, M, 1.0, numItermax=1000)
 
 #     print(real_weight_position)
 #     print(gen_weight_position)

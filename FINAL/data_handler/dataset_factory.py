@@ -59,7 +59,7 @@ class DatasetFactory:
         elif args.dataset_test == '2020_LER_20201021_testset.xlsx':
             return data.SEMI_sample_data(args.dataset_test)
         elif args.dataset_test == '2020_LER_20201102_testset_V04.xlsx':
-            return data.SEMI_sample_data(args.dataset_test
+            return data.SEMI_sample_data(args.dataset_test)
         elif args.dataset_test == '2020_LER_20201008_V008.xlsxadd_x_all':
             return data.SEMI_sample_data(args.dataset_test)
         # RDF, WFV, RDF+WFV

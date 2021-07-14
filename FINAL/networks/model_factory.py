@@ -105,6 +105,7 @@ class ModelFactory():
         
         elif args.trainer == 'mlp_gaussian':
             num_of_hidden = args.mean_hidden_dim
+            layer = args.layer
             
             import networks.mlp_gaussian as gaussian
-            return gaussian.Net(num_of_hidden, num_of_input=num_of_input, num_of_output=num_of_output) # activation 함수가 없음
+            return gaussian.Net(num_of_hidden, layer, num_of_input=num_of_input, num_of_output=num_of_output) # activation 함수가 없음

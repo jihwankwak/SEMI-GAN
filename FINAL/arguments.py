@@ -74,6 +74,9 @@ def get_args():
     parser.add_argument('--mode', default='train', choices=['train', 'eval'])
     parser.add_argument('--tr_num_in_cycle', type=int, default=50, help='number of cycle in tr_X')
     parser.add_argument('--clipping', default=None, type=float, help='weight clipping for wgan')
+    parser.add_argument('--real_bin_num', default=10, type=int, help='EMD bin number')
+    parser.add_argument('--layer', default=1, type=int, help='number of multi layer')
+
 #     parser = deepspeed.add_config_arguments(parser)
     args=parser.parse_args()
 

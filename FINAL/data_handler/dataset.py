@@ -13,7 +13,8 @@ def load_data_3(name, tr_num_in_cycle):
 
     print("============ Train Data load =============")
     print("X data shape: ", X_all.shape, "X per cycle data shape:", X_per_cycle.shape)
-    print("Y data shape: ", Y_all.shape, "Y per cycle data shape:", Y_per_cycle.shape)  
+    print("Y data shape: ", Y_all.shape, "Y per cycle data shape:", Y_per_cycle.shape)
+    print("Y mean cov shape : ", Y_mean_cov.shape)
     print("any nan in X?: ", np.argwhere(np.isnan(X_all)))
     print("any nan in Y?: ", np.argwhere(np.isnan(Y_all)))
 
