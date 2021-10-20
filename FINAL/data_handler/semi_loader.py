@@ -21,6 +21,7 @@ class SemiLoader(td.Dataset):
 #         print(data_x.shape)
 #         print(data_x[:,args.num_of_input-3:])
 #         print(data_x[:,args.num_of_input-3:].shape)
+        
         data_type = data_x[:,args.num_of_input-3:].reshape(-1,3)
         
         temp_x = (data_x[:,:args.num_of_input-3] - x_mean) / x_std

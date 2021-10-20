@@ -46,7 +46,7 @@ def get_args():
                         choices=['mlp', 'mlp_constant'], 
                         help='(default=%(default)s)')
     parser.add_argument('--gan_model_type', default=False, type=str, required=False,
-                        choices=['gan1', 'gan2', 'gan3', 'gan4', 'gan5', 'wgan', 'wgan2', 'wgan3', 'wgan4', 'gan6'], 
+                        choices=['gan1', 'gan2', 'gan3', 'gan4', 'gan5', 'wgan', 'wgan2', 'wgan3', 'wgan4', 'gan6', 'ccgan'], 
                         help='(default=%(default)s)')
     parser.add_argument('--seed', type=int, default=0,
                         help='Seeds values to be used; seed introduces randomness by changing order of classes')
@@ -76,6 +76,17 @@ def get_args():
     parser.add_argument('--clipping', default=None, type=float, help='weight clipping for wgan')
     parser.add_argument('--real_bin_num', default=10, type=int, help='EMD bin number')
     parser.add_argument('--layer', default=1, type=int, help='number of multi layer')
+    
+    ######ccgan######
+    parser.add_argument('--threshold_type', type=str, default='hard',
+                        choices=['soft', 'hard'])
+    parser.add_argument('--kernel_sigma', type=float, default=-1.0,
+                        help='If kernel_sigma<0, then use rule-of-thumb formula to compute the sigma.')
+    parser.add_argument('--kappa', type=float, default=-1.0)
+    #parser.add_argument('--nonzero_soft_weight_threshold', type=float, default=1e-3,
+                        #help='threshold for determining nonzero weights for SVDL')
+
+    
 
 #     parser = deepspeed.add_config_arguments(parser)
     args=parser.parse_args()

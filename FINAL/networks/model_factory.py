@@ -70,6 +70,10 @@ class ModelFactory():
         elif args.gan_model_type == 'wgan4':
             import networks.wgan4 as gan
             return gan.wgan_gen4(args.noise_d+num_of_input, args.gan_hidden_dim, args.num_of_output), gan.wgan_dis4(args.num_of_output+num_of_input, args.gan_hidden_dim, args.pdrop)
+        
+        elif args.gan_model_type == 'ccgan':
+            import networks.ccgan as gan
+            return gan.ccgen(args.noise_d+num_of_input, args.gan_hidden_dim, args.num_of_output), gan.ccdis(args.num_of_output+num_of_input, args.gan_hidden_dim) ## naive
             
     
     def get_vae_model(args):

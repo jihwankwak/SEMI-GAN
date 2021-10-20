@@ -95,6 +95,19 @@ print(" Y min, Y max for EMD ")
 print("Y min", train_Y_min) #
 print("Y max", train_Y_max) #
 
+# print('1.X_train_mean',X_train_mean.shape)
+# print('2.X_train_mean',X_train_std.shape)
+# print('3.X_train_mean',Y_train_mean.shape)
+# print('4.X_train_mean',Y_train_std.shape)
+# print('5.dataset.train_X', dataset.train_X.shape)
+# print('6.dataset.train_Y', dataset.train_Y.shape)
+# print('7.train_X_per_cycle', dataset.train_X_per_cycle.shape)
+# print('8.train_Y_per_cycle', dataset.train_Y_per_cycle.shape)
+# print('9.val_X_per_cycle', dataset.val_X_per_cycle.shape)
+# print('10.val_Y_per_cycle', dataset.val_Y_per_cycle.shape)
+# print('11.test_X_per_cycle', dataset.test_X_per_cycle.shape)
+# print('12.test_Y_per_cycle', dataset.test_Y_per_cycle.shape)
+
 train_dataset_loader = data_handler.SemiLoader(args, dataset.train_X, 
                                                      dataset.train_Y, 
                                                      X_train_mean, X_train_std, Y_train_mean, Y_train_std) #
@@ -138,7 +151,7 @@ optimizer_d = torch.optim.Adam(discriminator.parameters(), lr = args.d_lr)
 
 exp_gan_lr_scheduler = lr_scheduler.StepLR(optimizer_d, step_size=50, gamma=0.5)
 
-if args.gan_model_type == 'gan1' or 'wgan' or 'gan2' or 'gan3' or 'gan4' or 'wgan_gp':
+if args.gan_model_type == 'gan1' or 'wgan' or 'gan2' or 'gan3' or 'gan4' or 'wgan_gp' or 'ccgan':
     testType = 'naive_gan'
 
 print(testType)
@@ -160,7 +173,7 @@ if args.mode == 'train' and not os.path.isfile('./models/generator/'+gan_model_s
         p_real, p_fake = gan_mytrainer.evaluate()
         current_d_lr = gan_mytrainer.current_d_lr
 
-        if((epoch+1)% 10 == 0):
+        if((epoch+1)% 2 == 0):
             print("epoch:{:2d}, lr_d:{:.6f}, || p_real:{:.6f}, p_fake:{:.6f}".format(epoch, current_d_lr, p_real, p_fake))
             
     t_end = time.time()

@@ -8,8 +8,8 @@ import random
     
 def train_mean_std(args, x, y):
     
-    data_type = x[0][args.num_of_input-3:].reshape(1, -1)
-    
+    data_type = x[0][args.num_of_input-3:].reshape(1, -1) ##3은 ler, rdf, wfv -> num_of_input 바꿔주기
+    #print('data_type',data_type.shape)
     x_mean = np.mean(x[:,:args.num_of_input-3], axis=0, dtype=np.float64)
     x_std = np.std(x[:,:args.num_of_input-3], axis=0, dtype=np.float64)
     
